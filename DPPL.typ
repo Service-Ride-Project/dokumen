@@ -365,3 +365,14 @@ Deskripsi	: Dengan melakukan proses ini admin, karyawan gudang dan kasir dapat m
 
 #pagebreak()
 == Deskripsi Kelas-kelas
+=== Diagram Kelas
+=== Deskripsi Domain Persoalan
+=== Deskripsi Kelas Pengendali
+=== Deskripsi Kelas Entity (Persisten)
+=== Deskripsi Kelas Boundary
+== Deskripsi Perilaku Sistem
+== Kebutuhan Non Fungsional
+== Batasan Perancangan
+== Ringkasan Kebutuhan
+=== Ringkasan Kebutuhan Fungsional
+=== Ringkasan Kebutuhan Non Fungsional

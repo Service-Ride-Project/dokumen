@@ -99,7 +99,7 @@
 
 #show heading.where(level: 2): it => block(
   above: 1em,
-  below: 0.5em,
+  below: 1em,
 )[
   #text(size: 14pt, weight: "bold")[
     #context counter(heading).display("1.1") #it.body
@@ -108,7 +108,7 @@
 
 #show heading.where(level: 3): it => block(
   above: 1em,
-  below: 0.5em,
+  below: 1em,
 )[
   #text(size: 12pt, weight: "bold")[
     #context counter(heading).display("1.1.1") #it.body
@@ -165,6 +165,14 @@
 
 #set text(font: "Times New Roman", size: 12pt)
 
+#let paragraf(isi) = block(width: 100%)[
+  #set par(
+    justify: true,
+    leading: 0.5em,
+  )
+  #isi
+]
+
 // COVER
 #align(center)[
 
@@ -187,12 +195,13 @@
     Integrated Automotive Service & Maintenance Platform
   ]
 
-  #v(1cm)
+  #v(0.5cm)
 
   #image("/logo/ServiceRideVertical.png", width: 6cm)
 
-  #v(1cm)
+  #v(0.5cm)
 
+  #text(size: 12pt, weight: "bold")[Disusun Oleh:]
   #table(
     columns: (auto, auto),
     align: center + horizon,
@@ -240,7 +249,6 @@
   [#text(size: 16pt, weight: "bold")[G]], [],
 ),
 
-caption: [Daftar Anggota Kelompok],
 
 #table(
   columns: (20%, 16%, 16%, 16%, 16%, 16%),
@@ -330,6 +338,11 @@ Karakteristik pengguna dijabarkan dalam tabel berikut ini.
 
 == Deskripsi Fungsional
 === Use Case Diagram
+#paragraf[
+  Service Ride merupakan platform layanan otomotif
+  yang dirancang untuk mempermudah pengguna dalam
+  melakukan pemesanan servis kendaraan secara digital.
+]
 === Fungsi : nama use case
 ==== Skenario: Login
 Nomor :
@@ -365,3 +378,14 @@ Deskripsi	: Dengan melakukan proses ini admin, karyawan gudang dan kasir dapat m
 
 #pagebreak()
 == Deskripsi Kelas-kelas
+=== Diagram Kelas
+=== Deskripsi Domain Persoalan
+=== Deskripsi Kelas Pengendali
+=== Deskripsi Kelas Entity (Persisten)
+=== Deskripsi Kelas Boundary
+== Deskripsi Perilaku Sistem
+== Kebutuhan Non Fungsional
+== Batasan Perancangan
+== Ringkasan Kebutuhan
+=== Ringkasan Kebutuhan Fungsional
+=== Ringkasan Kebutuhan Non Fungsional
