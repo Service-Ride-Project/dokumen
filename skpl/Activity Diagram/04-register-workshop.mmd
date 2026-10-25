@@ -1,3 +1,4 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
   subgraph WorkshopOwner["Workshop Owner"]
     start([Start])
@@ -11,9 +12,9 @@ swimlane-beta TB
     store[Save pending workshop registration]
     errors[Show missing information]
     queue[Notify Super Admin for review]
-    done((Done))
+    finish((End))
   end
 
   start --> form --> check --> valid
   valid -->|No| errors --> revise --> form
-  valid -->|Yes| store --> queue --> done
+  valid -->|Yes| store --> queue --> finish

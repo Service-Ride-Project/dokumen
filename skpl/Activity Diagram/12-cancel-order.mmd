@@ -1,22 +1,20 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
+  subgraph Customer["Customer"]
     start([Start])
-    request[Choose order and request cancellation]
+    request[Choose marketplace order and request cancellation]
   end
 
   subgraph System["System"]
-    check[Check order status and policy]
-    allowed{Cancellation allowed?}
-    cancel[Cancel order and release reserved stock]
-    denied[Explain why cancellation is unavailable]
-    refund{Payment already captured?}
-    startrefund[Initiate refund workflow]
-    notify[Send cancellation notification]
-    done((Done))
+    check[Check order, shipment, payment, and pending stock status]
+    shipped{Already handed to courier?}
+    deny[Explain that cancellation is unavailable after shipment]
+    cancel[Cancel the order and release pending units]
+    refund[Start refund workflow for captured payment]
+    notify[Notify customer]
+    finish((End))
   end
 
-  start --> request --> check --> allowed
-  allowed -->|No| denied --> done
-  allowed -->|Yes| cancel --> refund
-  refund -->|Yes| startrefund --> notify --> done
-  refund -->|No| notify
+  start --> request --> check --> shipped
+  shipped -->|Yes| deny --> finish
+  shipped -->|No| cancel --> refund --> notify --> finish

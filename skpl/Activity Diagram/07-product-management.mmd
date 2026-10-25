@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopWarehouse["Workshop Warehouse"]
+  subgraph WorkshopWarehouse["Workshop Warehouse Administrator"]
     start([Start])
     action{Choose product action}
     edit[Enter product data]
@@ -13,11 +14,11 @@ swimlane-beta TB
     save[Save product changes]
     deactivate[Deactivate product listing]
     show[Refresh product catalog]
-    done((Done))
+    finish((End))
   end
 
   start --> action
   action -->|Create or update| edit --> check --> valid
   valid -->|No| correct --> edit
-  valid -->|Yes| save --> show --> done
+  valid -->|Yes| save --> show --> finish
   action -->|Deactivate| remove --> deactivate --> show

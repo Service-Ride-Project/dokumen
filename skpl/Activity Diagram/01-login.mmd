@@ -1,22 +1,23 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph UserandStaff["User / Staff"]
+  subgraph AllRoles["All Roles"]
     start([Start])
-    credentials[Enter email and password]
-    retry[Correct credentials]
+    credentials[Enter account credentials]
+    retry[Correct credentials and try again]
   end
 
   subgraph System["System"]
-    validate[Validate credentials]
+    validate[Validate credentials and assigned role]
     valid{Credentials valid?}
     active{Account active?}
-    session[Create session]
+    session[Create role-based session]
     error[Show login error]
     blocked[Show account status]
-    done((Done))
+    finish((End))
   end
 
   start --> credentials --> validate --> valid
   valid -->|No| error --> retry --> credentials
   valid -->|Yes| active
-  active -->|No| blocked --> done
-  active -->|Yes| session --> done
+  active -->|No| blocked --> finish
+  active -->|Yes| session --> finish

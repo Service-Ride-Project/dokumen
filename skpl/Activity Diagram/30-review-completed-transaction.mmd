@@ -1,0 +1,26 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph Customer["Customer"]
+    start([Start])
+    submit[Write a review for completed service or marketplace order]
+    edit[Edit review within 24 hours after transaction completion]
+  end
+
+  subgraph WorkshopOwner["Workshop Owner"]
+    respond[Reply to review using Owner identity]
+  end
+
+  subgraph System["System"]
+    check[Check transaction completion and review deadline]
+    eligible{Review or edit is allowed?}
+    save[Save review and display anonymized customer identity to Owner]
+    moderate[Allow Super Admin audit for reported policy violations]
+    error[Explain review timing restriction]
+    finish((End))
+  end
+
+  start --> submit --> check --> eligible
+  eligible -->|No| error --> finish
+  eligible -->|Yes| save --> moderate --> finish
+  save --> respond --> finish
+  save --> edit --> check

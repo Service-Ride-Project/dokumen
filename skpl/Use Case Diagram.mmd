@@ -1,122 +1,134 @@
+%%{init: {"theme": "redux-color"}}%%
 usecase-beta
-direction LR
+ direction LR
 
 actor SuperAdmin("Super Admin")
-actor User("User")
-
+actor Customer("Customer")
 actor WorkshopOwner("Workshop Owner")
-actor WorkshopWarehouse("Workshop Warehouse")
-actor WorkshopOperationalAdministrator("Workshop Operational Administrator")
-actor WorkshopTechnician("Workshop Technician")
-actor WorkshopDriver("Workshop Driver")
+actor WarehouseAdmin("Workshop Warehouse Administrator")
+actor OpsAdmin("Workshop Operations Administrator")
+actor Mechanic("Mechanic")
+actor PickupService("Pickup Service")
 
 systemBoundary ServiceRide["Service Ride"]@{ type: package }:::system
-
     Login("Account Login")
     Register("Account Registration")
     Verify("Account Verification")
 
-    RegisterWorkshop("Register Workshop")
-    VerifyWorkshop("Verify Workshop")
-    EmployeeManagement("Employee Management")
+    RegisterWorkshop("Register Workshop or Branch")
+    VerifyWorkshop("Verify Workshop Legal Documents")
+    EmployeeManagement("Manage Employees and Branch Access")
 
-    ManagementProduct("Product Management")
-    ManageInventory("Manage Inventory")
-    OrderProductOnsite("Order Product Onsite")
-    OrderProductMarketplace("Order Product on Marketplace")
-    ConfirmOrder("Confirm Order")
-    CancelOrder("Cancel Order")
+    ManagementProduct("Manage Spare Part Catalog")
+    ManageInventory("Manage Workshop Inventory Units")
+    OrderProductOnsite("Record Offline Spare Part Sale")
+    OrderProductMarketplace("Order Spare Part on Marketplace")
+    ConfirmOrder("Process and Confirm Order")
+    CancelOrder("Cancel Marketplace Order")
+    ReturnOrder("Request and Review Marketplace Return")
 
     ManageVehicle("Manage Vehicle")
-    BookingServiceOnsite("Booking Service Onsite")
-    BookingServicePickup("Booking Service Pickup")
-    ConfirmBooking("Confirm Booking")
+    BookingServiceOnsite("Book Service at Workshop")
+    BookingServicePickup("Book Service with Pickup")
+    OfflineService("Register Full Offline Service")
+    ConfirmBooking("Confirm Booking or Manage Queue")
     CancelBooking("Cancel Booking")
-    ViewOrderBookingStatus("View Order and Booking Status")
+    ViewOrderBookingStatus("View Order and Service Status")
     AssignTechnician("Assign Technician")
+    TrackPickup("Track Pickup and Handover")
 
-    VehicleInspectionService("Vehicle Inspection and Cost Estimation")
-    ConfirmEstimateCost("Confirm Estimated Cost")
-    ConfirmComplete("Confirm Service Completion")
-    PickupVehicleService("Pickup Vehicle for Service")
+    VehicleInspectionService("Inspect Vehicle and Prepare Cost Estimate")
+    CheckEstimateStock("Check Workshop Stock for Estimate")
+    ConfirmEstimateCost("Approve or Reject Estimate")
+    ConfirmComplete("Complete Service and Record Evidence")
+    PickupVehicleService("Pick Up Vehicle for Service")
     ReturnVehicleService("Return Vehicle After Service")
 
-    Payment("Payment")
+    Payment("Pay for Pickup, Service, or Order")
+    RecordCashPayment("Record Cash Payment")
     ConfirmPayment("Confirm Payment")
+    Invoice("Generate Final Invoice")
 
-    Invoice("Generate Invoice")
-
+    ReviewTransaction("Review Completed Transaction")
+    ManageComplaint("Handle Complaint or Mediate Dispute")
+    ManagePlatform("Manage Platform Data and Promotions")
 end
 
 SuperAdmin --> Login
 SuperAdmin --> VerifyWorkshop
 SuperAdmin --> ConfirmPayment
+SuperAdmin --> ManageComplaint
+SuperAdmin --> ManagePlatform
 
 WorkshopOwner --> Login
 WorkshopOwner --> RegisterWorkshop
 WorkshopOwner --> EmployeeManagement
+WorkshopOwner --> ManageComplaint
 
-WorkshopWarehouse --> Login
-WorkshopWarehouse --> ManagementProduct
-WorkshopWarehouse --> ManageInventory
-WorkshopWarehouse --> OrderProductOnsite
-WorkshopWarehouse --> ConfirmOrder
+WarehouseAdmin --> Login
+WarehouseAdmin --> ManagementProduct
+WarehouseAdmin --> ManageInventory
+WarehouseAdmin --> OrderProductOnsite
+WarehouseAdmin --> ConfirmOrder
+WarehouseAdmin --> ReturnOrder
 
-WorkshopOperationalAdministrator --> Login
-WorkshopOperationalAdministrator --> BookingServiceOnsite
-WorkshopOperationalAdministrator --> BookingServicePickup
-WorkshopOperationalAdministrator --> ConfirmBooking
-WorkshopOperationalAdministrator --> AssignTechnician
-WorkshopOperationalAdministrator --> PickupVehicleService
-WorkshopOperationalAdministrator --> ReturnVehicleService
-WorkshopOperationalAdministrator --> Payment
-WorkshopOperationalAdministrator --> Invoice
+OpsAdmin --> Login
+OpsAdmin --> BookingServiceOnsite
+OpsAdmin --> BookingServicePickup
+OpsAdmin --> OfflineService
+OpsAdmin --> ConfirmBooking
+OpsAdmin --> AssignTechnician
+OpsAdmin --> PickupVehicleService
+OpsAdmin --> ReturnVehicleService
+OpsAdmin --> RecordCashPayment
+OpsAdmin --> Invoice
+OpsAdmin --> ManageComplaint
 
-WorkshopTechnician --> Login
-WorkshopTechnician --> VehicleInspectionService
-WorkshopTechnician --> ConfirmComplete
+Mechanic --> Login
+Mechanic --> VehicleInspectionService
+Mechanic --> ConfirmComplete
 
-WorkshopDriver --> Login
-WorkshopDriver --> PickupVehicleService
-WorkshopDriver --> ReturnVehicleService
+PickupService --> Login
+PickupService --> TrackPickup
 
-User --> Login
-User --> Register
-User --> ManageVehicle
-User --> OrderProductMarketplace
-User --> CancelOrder
-User --> BookingServiceOnsite
-User --> BookingServicePickup
-User --> CancelBooking
-User --> ViewOrderBookingStatus
-User --> ConfirmEstimateCost
-User --> Payment
+Customer --> Login
+Customer --> Register
+Customer --> ManageVehicle
+Customer --> OrderProductMarketplace
+Customer --> CancelOrder
+Customer --> ReturnOrder
+Customer --> BookingServiceOnsite
+Customer --> BookingServicePickup
+Customer --> CancelBooking
+Customer --> ViewOrderBookingStatus
+Customer --> TrackPickup
+Customer --> ConfirmEstimateCost
+Customer --> Payment
+Customer --> ReviewTransaction
+Customer --> ManageComplaint
 
 Register ..> : include Verify
-
 VerifyWorkshop ..> : extend RegisterWorkshop
-
 ManageInventory ..> : extend ManagementProduct
-
+CheckEstimateStock ..> : extend VehicleInspectionService
 ConfirmOrder ..> : extend OrderProductOnsite
 ConfirmOrder ..> : extend OrderProductMarketplace
 CancelOrder ..> : extend OrderProductMarketplace
-
+ReturnOrder ..> : extend OrderProductMarketplace
 ConfirmBooking ..> : extend BookingServiceOnsite
 ConfirmBooking ..> : extend BookingServicePickup
+ConfirmBooking ..> : extend OfflineService
 CancelBooking ..> : extend BookingServiceOnsite
 CancelBooking ..> : extend BookingServicePickup
-
 BookingServiceOnsite ..> : include ManageVehicle
 BookingServicePickup ..> : include ManageVehicle
-
 PickupVehicleService ..> : extend BookingServicePickup
 ReturnVehicleService ..> : extend BookingServicePickup
-
+TrackPickup ..> : extend PickupVehicleService
+TrackPickup ..> : extend ReturnVehicleService
 AssignTechnician ..> : extend ConfirmBooking
-
 ConfirmEstimateCost ..> : extend VehicleInspectionService
 ConfirmComplete ..> : extend VehicleInspectionService
-
+RecordCashPayment ..> : extend Payment
 ConfirmPayment ..> : extend Payment
 Invoice ..> : extend ConfirmPayment

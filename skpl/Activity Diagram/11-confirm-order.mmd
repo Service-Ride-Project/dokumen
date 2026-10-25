@@ -1,18 +1,22 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopWarehouse["Workshop Warehouse"]
+  subgraph WorkshopWarehouse["Workshop Warehouse Administrator"]
     start([Start])
-    review[Review order items and availability]
-    approve{Can fulfill order?}
+    review[Review paid order and pending units]
+    fulfill{Can the workshop fulfill the order?}
+    pick[Pick and pack ordered units]
+    shipment[Hand package to third-party courier]
+    input[Enter courier and tracking number manually]
   end
 
   subgraph System["System"]
-    load[Load pending order]
-    reserve[Reserve inventory and confirm order]
-    reject[Mark order unable to fulfill]
-    notify[Notify customer or onsite staff]
-    done((Done))
+    load[Load paid marketplace order]
+    reject[Flag unavailable or inconsistent order and notify operations]
+    save[Save shipment details and update order status]
+    notify[Notify customer with shipment status and tracking number]
+    finish((End))
   end
 
-  start --> load --> review --> approve
-  approve -->|Yes| reserve --> notify --> done
-  approve -->|No| reject --> notify
+  start --> load --> review --> fulfill
+  fulfill -->|No| reject --> finish
+  fulfill -->|Yes| pick --> shipment --> input --> save --> notify --> finish

@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
+  subgraph Customer["Customer"]
     start([Start])
     form[Enter registration details]
     correct[Correct details]
@@ -11,9 +12,9 @@ swimlane-beta TB
     save[Create unverified account]
     error[Show validation errors]
     verification[Start account verification]
-    done((Done))
+    finish((End))
   end
 
   start --> form --> check --> ok
   ok -->|No| error --> correct --> form
-  ok -->|Yes| save --> verification --> done
+  ok -->|Yes| save --> verification --> finish

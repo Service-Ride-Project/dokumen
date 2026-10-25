@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
+  subgraph Customer["Customer"]
     start([Start])
     select{View orders or bookings?}
     order[Select an order]
@@ -10,9 +11,9 @@ swimlane-beta TB
     loadorder[Retrieve order status and timeline]
     loadbooking[Retrieve booking status and timeline]
     display[Display current status]
-    done((Done))
+    finish((End))
   end
 
   start --> select
-  select -->|Orders| order --> loadorder --> display --> done
+  select -->|Orders| order --> loadorder --> display --> finish
   select -->|Bookings| booking --> loadbooking --> display

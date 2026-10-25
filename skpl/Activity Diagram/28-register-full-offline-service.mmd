@@ -1,0 +1,31 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
+    start([Start])
+    capture[Record customer contact, vehicle, and offline service request]
+    identity[Record an identity document when used; NIK is not required]
+    queue[Add customer and vehicle to workshop queue]
+    submit[Submit inspection and estimate request]
+    cash[Record cash payment in the partner interface]
+    online[Direct customer to the online payment flow when QRIS is used]
+  end
+
+  subgraph System["System"]
+    draft[Create or link customer draft account and retain unverified status]
+    save[Save service history against the draft customer and vehicle]
+    inspect[Continue to vehicle inspection and cost estimation]
+    approval{How is estimate approval received?}
+    whatsapp[Store WhatsApp screenshot and verify sender against recorded contact]
+    telephone[Record telephone approval outcome]
+    authorize[Continue to service only after approval and payment are recorded]
+    method{Payment method?}
+    finish((End))
+  end
+
+  start --> capture --> identity --> draft --> save --> queue --> submit --> inspect --> approval
+  approval -->|In app| authorize
+  approval -->|WhatsApp| whatsapp --> authorize
+  approval -->|Telephone| telephone --> authorize
+  authorize --> method
+  method -->|Cash| cash --> finish
+  method -->|Dummy QRIS| online --> finish

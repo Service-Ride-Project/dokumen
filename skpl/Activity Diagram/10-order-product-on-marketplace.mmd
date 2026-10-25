@@ -1,20 +1,29 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
+  subgraph Customer["Customer"]
     start([Start])
-    browse[Browse products and add to cart]
-    checkout[Provide delivery details and place order]
-    revise[Change cart or address]
+    browse[Browse products from workshops with marketplace enabled]
+    checkout[Set quantities and provide delivery address]
+    pay[Pay online for the marketplace order]
+    revise[Change cart or choose another workshop product]
   end
 
   subgraph System["System"]
-    check[Validate stock and checkout details]
-    valid{Order valid?}
-    create[Create marketplace order]
-    error[Show issue]
-    notify[Notify workshop warehouse]
-    done((Done))
+    check[Validate workshop listing, address, and available physical units]
+    valid{Order and stock valid?}
+    unavailable[Show unavailable items; exclude pending units]
+    reserve[Mark selected units pending during checkout]
+    process[Process Dummy QRIS payment]
+    paid{Payment successful?}
+    create[Create paid marketplace order]
+    release[Release pending units if payment fails]
+    notify[Notify Workshop Warehouse Administrator]
+    fail[Show payment failure without confirming the order]
+    finish((End))
   end
 
   start --> browse --> checkout --> check --> valid
-  valid -->|No| error --> revise --> checkout
-  valid -->|Yes| create --> notify --> done
+  valid -->|No| unavailable --> revise --> checkout
+  valid -->|Yes| reserve --> pay --> process --> paid
+  paid -->|No| release --> fail --> finish
+  paid -->|Yes| create --> notify --> finish

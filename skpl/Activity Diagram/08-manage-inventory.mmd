@@ -1,19 +1,28 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopWarehouse["Workshop Warehouse"]
+  subgraph WorkshopWarehouse["Workshop Warehouse Administrator"]
     start([Start])
-    select[Select product and stock adjustment]
-    correct[Correct adjustment]
+    select[Select workshop and physical spare part unit]
+    action{Choose inventory action}
+    adjust[Enter stock receipt or correction details]
+    inspect[Review units marked pending]
+    correct[Correct invalid details]
   end
 
   subgraph System["System"]
-    check[Check product and adjustment]
+    scope[Load inventory for the selected workshop only]
+    check[Validate unit identity and stock movement]
     valid{Adjustment valid?}
-    update[Update stock balance]
-    log[Record inventory movement]
+    update[Update unit availability and workshop balance]
+    log[Record stock movement and audit details]
     error[Show inventory error]
-    done((Done))
+    release[Release pending allocation when its linked transaction is cancelled]
+    finish((End))
   end
 
-  start --> select --> check --> valid
-  valid -->|No| error --> correct --> select
-  valid -->|Yes| update --> log --> done
+  start --> select --> scope --> action
+  action -->|Receive or correct stock| adjust --> check --> valid
+  valid -->|No| error --> correct --> adjust
+  valid -->|Yes| update --> log --> finish
+  action -->|Review pending units| inspect --> log --> finish
+  action -->|Release cancelled allocation| release --> log --> finish

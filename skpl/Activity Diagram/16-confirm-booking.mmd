@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
     start([Start])
     review[Review booking and capacity]
     decision{Can accept booking?}
@@ -11,9 +12,9 @@ swimlane-beta TB
     confirm[Confirm booking and reserve slot]
     reject[Reject booking request]
     notify[Notify user]
-    done((Done))
+    finish((End))
   end
 
   start --> load --> review --> decision
-  decision -->|Yes| confirm --> notify --> done
+  decision -->|Yes| confirm --> notify --> finish
   decision -->|No| reason --> reject --> notify

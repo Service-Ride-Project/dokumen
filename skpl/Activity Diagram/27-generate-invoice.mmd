@@ -1,18 +1,21 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
     start([Start])
-    request[Request invoice for completed transaction]
+    request[Request final invoice after service completion]
+    fix[Resolve missing completion or payment record]
   end
 
   subgraph System["System"]
-    check[Check transaction and payment records]
-    valid{Invoice requirements satisfied?}
-    generate[Generate numbered invoice]
-    reject[Show missing requirements]
-    send[Save invoice and provide to customer]
-    done((Done))
+    check[Check completed service, approved estimate, and payment records]
+    valid{Final invoice requirements satisfied?}
+    generate[Generate and number final invoice from approved transaction items]
+    reject[Show missing or inconsistent requirements]
+    save[Save invoice separately from the estimate document]
+    provide[Make final invoice available to customer]
+    finish((End))
   end
 
   start --> request --> check --> valid
-  valid -->|No| reject --> done
-  valid -->|Yes| generate --> send --> done
+  valid -->|No| reject --> fix --> check
+  valid -->|Yes| generate --> save --> provide --> finish

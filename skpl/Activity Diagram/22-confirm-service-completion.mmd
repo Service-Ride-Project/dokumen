@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopTechnician["Workshop Technician"]
+  subgraph WorkshopTechnician["Mechanic"]
     start([Start])
     finish[Complete work and document results]
     test[Perform final service checks]
@@ -10,9 +11,9 @@ swimlane-beta TB
   subgraph System["System"]
     complete[Record service completion]
     notify[Notify operations and user]
-    done((Done))
+    finish((End))
   end
 
   start --> finish --> test --> passed
   passed -->|No| rework --> test
-  passed -->|Yes| complete --> notify --> done
+  passed -->|Yes| complete --> notify --> finish

@@ -1,3 +1,4 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
   subgraph WorkshopOwner["Workshop Owner"]
     start([Start])
@@ -13,11 +14,11 @@ swimlane-beta TB
     save[Create or update employee]
     disable[Deactivate employee access]
     result[Show updated employee list]
-    done((Done))
+    finish((End))
   end
 
   start --> choose
   choose -->|Add or edit| details --> validate --> valid
   valid -->|No| fix --> details
-  valid -->|Yes| save --> result --> done
+  valid -->|Yes| save --> result --> finish
   choose -->|Deactivate| select --> disable --> result

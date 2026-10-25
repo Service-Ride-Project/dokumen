@@ -1,20 +1,29 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph UserandOperationalAdministrator["User / Operational Administrator"]
+  subgraph Customer["Customer"]
     start([Start])
-    select[Select payable order or service invoice]
-    method[Choose payment method and submit payment]
-    retry[Try again or change method]
+    select[Select pickup, approved service estimate, or marketplace order]
+    online[Submit online payment using Service Ride Dummy QRIS]
+    retry[Retry or choose another available online method]
   end
 
-  subgraph SystemandPaymentGateway["System / Payment Gateway"]
-    calculate[Calculate payable amount]
-    process[Process payment]
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
+    cash[Record cash received in the partner interface]
+  end
+
+  subgraph System["System"]
+    calculate[Calculate the amount due from the relevant transaction]
+    channel{Payment channel?}
+    process[Validate Dummy QRIS payment result]
     ok{Payment successful?}
     failed[Show payment failure]
-    record[Record payment transaction]
-    done((Done))
+    recordonline[Record online payment and link it to the transaction]
+    recordcash[Record cash payment and link it to the transaction]
+    finish((End))
   end
 
-  start --> select --> calculate --> method --> process --> ok
-  ok -->|No| failed --> retry --> method
-  ok -->|Yes| record --> done
+  start --> select --> calculate --> channel
+  channel -->|Online| online --> process --> ok
+  ok -->|No| failed --> retry --> process
+  ok -->|Yes| recordonline --> finish
+  channel -->|Cash for offline service| cash --> recordcash --> finish

@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
+  subgraph Customer["Customer"]
     start([Start])
     code[Submit verification code]
     retry[Request or enter new code]
@@ -11,9 +12,9 @@ swimlane-beta TB
     valid{Code valid?}
     activate[Mark account verified]
     fail[Show verification failure]
-    done((Done))
+    finish((End))
   end
 
   start --> send --> code --> check --> valid
   valid -->|No| fail --> retry --> code
-  valid -->|Yes| activate --> done
+  valid -->|Yes| activate --> finish

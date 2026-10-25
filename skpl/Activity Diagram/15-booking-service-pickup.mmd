@@ -1,20 +1,28 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph UserandOperationalAdministrator["User / Operational Administrator"]
+  subgraph Customer["Customer"]
     start([Start])
-    vehicle[Select or record customer vehicle]
+    vehicle[Select a saved vehicle]
     address[Enter pickup address and preferred schedule]
-    revise[Change address or schedule]
+    review[Review round-trip pickup fee]
+    pay[Pay pickup fee before driver departure]
+    retry[Correct address, schedule, or retry payment]
   end
 
   subgraph System["System"]
-    check[Check pickup coverage and availability]
-    valid{Pickup available?}
-    create[Create pickup booking request]
-    error[Show pickup constraints]
-    queue[Send booking for confirmation]
-    done((Done))
+    coverage[Check workshop pickup coverage and slot availability]
+    available{Pickup available?}
+    calculate[Calculate and display round-trip pickup fee]
+    payment[Process online Dummy QRIS payment]
+    paid{Payment successful?}
+    create[Create pickup booking and record payment]
+    queue[Queue booking for Operations Administrator assignment]
+    error[Show coverage, slot, or payment issue]
+    finish((End))
   end
 
-  start --> vehicle --> address --> check --> valid
-  valid -->|No| error --> revise --> address
-  valid -->|Yes| create --> queue --> done
+  start --> vehicle --> address --> coverage --> available
+  available -->|No| error --> retry --> address
+  available -->|Yes| calculate --> review --> pay --> payment --> paid
+  paid -->|No| error
+  paid -->|Yes| create --> queue --> finish

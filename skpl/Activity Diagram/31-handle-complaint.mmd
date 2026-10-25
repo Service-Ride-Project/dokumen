@@ -1,0 +1,32 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph Customer["Customer"]
+    start([Start])
+    report[Submit complaint and attach available evidence]
+  end
+
+  subgraph WorkshopOwner["Workshop Owner"]
+    ownerreview[Review complaint and propose a resolution]
+    ownerdecision{Resolved by Workshop Owner?}
+  end
+
+  subgraph WorkshopOperations["Workshop Operations Administrator"]
+    opsreview[Review operational timeline, photos, and transaction records]
+    opsdecision{Resolved by Operations Administrator?}
+  end
+
+  subgraph SuperAdmin["Super Admin"]
+    mediate[Review evidence and mediate unresolved dispute]
+  end
+
+  subgraph System["System"]
+    save[Save complaint and link supporting audit records]
+    update[Record outcome and notify customer]
+    finish((End))
+  end
+
+  start --> report --> save --> ownerreview --> ownerdecision
+  ownerdecision -->|Yes| update --> finish
+  ownerdecision -->|No| opsreview --> opsdecision
+  opsdecision -->|Yes| update
+  opsdecision -->|No| mediate --> update

@@ -1,0 +1,28 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph Customer["Customer"]
+    start([Start])
+    request[Request return within one day after marking order received]
+    evidence[Submit package opening or other return evidence]
+  end
+
+  subgraph WorkshopWarehouse["Workshop Warehouse Administrator"]
+    inspect[Review return request and evidence]
+    decision{Return request supported?}
+  end
+
+  subgraph System["System"]
+    check[Check received date, deadline, and order status]
+    eligible{Request is within the return window?}
+    reject[Reject request and explain the reason]
+    record[Record return decision and audit details]
+    refund[Process refund only after review; never refund automatically]
+    notify[Notify customer of the decision]
+    finish((End))
+  end
+
+  start --> request --> check --> eligible
+  eligible -->|No| reject --> notify --> finish
+  eligible -->|Yes| evidence --> inspect --> decision
+  decision -->|No| record --> notify --> finish
+  decision -->|Yes| record --> refund --> notify --> finish

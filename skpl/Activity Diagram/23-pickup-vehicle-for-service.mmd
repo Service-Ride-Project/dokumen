@@ -1,23 +1,35 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
     start([Start])
-    assign[Schedule pickup and assign driver]
+    assign[Assign Pickup Service after pickup fee is paid]
+    monitor[Monitor pickup status and location alerts]
+    reschedule[Arrange follow-up for unsuccessful pickup]
   end
 
-  subgraph WorkshopDriver["Workshop Driver"]
-    accept[Review pickup assignment]
-    collect[Travel to pickup and verify vehicle handover]
+  subgraph WorkshopDriver["Pickup Service"]
+    accept[Review assigned pickup]
+    travel[Travel to customer and verify vehicle handover]
+    update[Send location update every 3 to 4 minutes while travelling]
     success{Vehicle collected?}
     issue[Report unsuccessful pickup]
     deliver[Deliver vehicle to workshop]
   end
 
   subgraph System["System"]
-    update[Update pickup and arrival status]
-    reschedule[Notify operations for rescheduling]
-    done((Done))
+    paid{Pickup payment confirmed?}
+    activate[Activate pickup task and location tracking]
+    stale{No location update for 5 to 10 minutes?}
+    alert[Notify Operations Administrator and show customer last known location]
+    sse[Publish authorized location updates through SSE]
+    status[Record pickup and workshop arrival status]
+    finish((End))
   end
 
-  start --> assign --> accept --> collect --> success
-  success -->|No| issue --> reschedule --> done
-  success -->|Yes| deliver --> update --> done
+  start --> paid
+  paid -->|No| end
+  paid -->|Yes| assign --> activate --> accept --> travel --> update --> stale
+  stale -->|Yes| alert --> monitor --> update
+  stale -->|No| sse --> success
+  success -->|No| issue --> reschedule --> finish
+  success -->|Yes| deliver --> status --> finish

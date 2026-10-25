@@ -1,20 +1,21 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph UserandOperationalAdministrator["User / Operational Administrator"]
+  subgraph Customer["Customer"]
     start([Start])
-    vehicle[Select or record customer vehicle]
-    schedule[Select onsite service and preferred slot]
-    retry[Choose another slot]
+    vehicle[Select a saved vehicle]
+    workshop[Choose workshop and service date and time]
+    retry[Choose another available slot]
   end
 
   subgraph System["System"]
-    check[Check service and workshop availability]
+    check[Check workshop service availability and schedule]
     available{Slot available?}
-    draft[Create onsite booking request]
+    draft[Create onsite service booking request]
     error[Show unavailable slot]
-    queue[Send booking for confirmation]
-    done((Done))
+    queue[Send booking to workshop Operations Administrator]
+    finish((End))
   end
 
-  start --> vehicle --> schedule --> check --> available
-  available -->|No| error --> retry --> schedule
-  available -->|Yes| draft --> queue --> done
+  start --> vehicle --> workshop --> check --> available
+  available -->|No| error --> retry --> workshop
+  available -->|Yes| draft --> queue --> finish

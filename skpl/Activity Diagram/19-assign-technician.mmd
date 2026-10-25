@@ -1,5 +1,6 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
     start([Start])
     pick[Select confirmed booking and technician]
     retry[Choose another technician]
@@ -11,9 +12,9 @@ swimlane-beta TB
     assign[Assign technician to booking]
     error[Show assignment conflict]
     notify[Notify technician]
-    done((Done))
+    finish((End))
   end
 
   start --> pick --> check --> available
   available -->|No| error --> retry --> pick
-  available -->|Yes| assign --> notify --> done
+  available -->|Yes| assign --> notify --> finish

@@ -1,22 +1,39 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
-    start([Start])
-    request[Choose booking and request cancellation]
+  subgraph Customer["Customer"]
+    request[Select booking and request cancellation]
+  end
+
+  subgraph WorkshopOperations["Workshop Operations Administrator"]
+    partnercancel[Cancel booking on behalf of the workshop]
+  end
+
+  subgraph SuperAdmin["Super Admin"]
+    review[Review workshop cancellations after driver departure]
+    suspend[Apply workshop suspension when the threshold is exceeded]
   end
 
   subgraph System["System"]
-    check[Check booking status and cancellation policy]
-    allowed{Cancellation allowed?}
-    cancel[Cancel booking and release slot]
-    deny[Explain restriction]
-    pickup{Pickup already assigned?}
-    release[Notify operations to cancel pickup]
-    notify[Notify booking participants]
-    done((Done))
+    start([Start])
+    initiator{Who initiated cancellation?}
+    check[Check booking, pickup assignment, departure status, and cancellation history]
+    customerdeparted{Has the pickup driver departed?}
+    partnerdeparted{Has the pickup driver departed?}
+    customerrefund[Refund customer pickup fee in full to Service Ride balance]
+    restrict[Apply one-week pickup booking restriction to customer]
+    partnerrefund[Refund pickup fee in full to Service Ride balance]
+    count[Count workshop cancellations after driver departure in the weekly period]
+    threshold{More than 10 qualifying cancellations?}
+    notify[Notify affected parties and preserve cancellation audit]
+    finish((End))
   end
 
-  start --> request --> check --> allowed
-  allowed -->|No| deny --> done
-  allowed -->|Yes| cancel --> pickup
-  pickup -->|Yes| release --> notify --> done
-  pickup -->|No| notify
+  start --> initiator
+  initiator -->|Customer| request --> check --> customerdeparted
+  customerdeparted -->|No| customerrefund --> notify --> finish
+  customerdeparted -->|Yes| restrict --> notify --> finish
+  initiator -->|Workshop| partnercancel --> check --> partnerrefund --> partnerdeparted
+  partnerdeparted -->|No| notify --> finish
+  partnerdeparted -->|Yes| count --> threshold
+  threshold -->|No| notify
+  threshold -->|Yes| review --> suspend --> notify

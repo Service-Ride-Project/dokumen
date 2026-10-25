@@ -1,18 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
   subgraph SuperAdmin["Super Admin"]
     start([Start])
-    review[Review payment transaction if manual verification needed]
-    decision{Payment valid?}
+    review[Review transaction only when manual follow-up is required]
+    decision{Payment evidence or result is valid?}
   end
 
   subgraph System["System"]
-    load[Retrieve payment proof and gateway status]
-    confirmed[Set payment status to confirmed]
-    flag[Flag payment for follow-up]
+    load[Retrieve payment record, proof, and Dummy QRIS result]
+    confirmed[Set payment status to confirmed and preserve audit trail]
+    flag[Flag transaction for follow-up; do not mark it paid]
     notify[Notify relevant parties]
-    done((Done))
+    finish((End))
   end
 
   start --> load --> review --> decision
-  decision -->|Yes| confirmed --> notify --> done
-  decision -->|No| flag --> notify
+  decision -->|Yes| confirmed --> notify --> finish
+  decision -->|No| flag --> notify --> finish

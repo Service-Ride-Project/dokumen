@@ -1,19 +1,22 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopWarehouse["Workshop Warehouse"]
+  subgraph WorkshopWarehouse["Workshop Warehouse Administrator"]
     start([Start])
-    add[Select products and quantities]
-    revise[Revise items]
+    add[Select spare parts and quantities for offline sale]
+    revise[Change items or quantities]
+    receive[Record cash received]
   end
 
   subgraph System["System"]
-    stock[Check available stock]
+    scope[Load physical units from this workshop only]
+    stock[Check available units; exclude pending stock]
     available{Stock sufficient?}
-    draft[Create onsite sales order]
-    short[Show stock shortage]
-    confirm[Proceed to order confirmation]
-    done((Done))
+    reserve[Mark sold units pending and record stock movement]
+    shortage[Show stock shortage]
+    sale[Save offline sale and payment record]
+    finish((End))
   end
 
-  start --> add --> stock --> available
-  available -->|No| short --> revise --> add
-  available -->|Yes| draft --> confirm --> done
+  start --> add --> scope --> stock --> available
+  available -->|No| shortage --> revise --> add
+  available -->|Yes| receive --> reserve --> sale --> finish

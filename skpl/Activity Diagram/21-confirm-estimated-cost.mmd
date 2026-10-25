@@ -1,17 +1,39 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph User["User"]
+  subgraph Customer["Customer"]
     start([Start])
-    review[Review repair scope and estimate]
+    review[Review estimate, repair scope, parts availability, and photos]
     decision{Approve estimate?}
   end
 
+  subgraph WorkshopOperationalAdministrator["Workshop Operations Administrator"]
+    channel{Approval received through which channel?}
+    capture[Record WhatsApp approval and screenshot; verify sender number]
+    calllog[Record outcome of approval by telephone]
+  end
+
   subgraph System["System"]
-    load[Display estimate]
-    approve[Record approval and authorize service]
-    reject[Record rejection and notify workshop]
-    done((Done))
+    load[Display current estimate version]
+    lock[Lock approved estimate and record approval evidence]
+    stock{All required units still available at this workshop?}
+    revise[Return to Operations Administrator to revise the estimate and request renewed approval]
+    allocate[Mark required workshop stock units pending and record stock movement]
+    payment[Request payment for the approved service estimate]
+    paid{Payment recorded successfully?}
+    authorize[Authorize service work; do not allow unilateral added charges]
+    reject[Record rejection and notify workshop; keep service unauthorized]
+    release[Release pending units if payment fails or is cancelled]
+    finish((End))
   end
 
   start --> load --> review --> decision
-  decision -->|Yes| approve --> done
-  decision -->|No| reject --> done
+  decision -->|Reject| reject --> finish
+  decision -->|Approve in app| lock
+  decision -->|Approve outside app| channel
+  channel -->|WhatsApp| capture --> lock
+  channel -->|Telephone| calllog --> lock
+  lock --> stock
+  stock -->|No| revise --> finish
+  stock -->|Yes| allocate --> payment --> paid
+  paid -->|Yes| authorize --> finish
+  paid -->|No| release --> finish

@@ -1,15 +1,29 @@
+%%{init: {"theme": "redux-color"}}%%
 swimlane-beta TB
-  subgraph WorkshopTechnician["Workshop Technician"]
+  subgraph Mechanic["Mechanic"]
     start([Start])
-    inspect[Inspect vehicle and record findings]
-    parts[Specify work items parts and labor]
+    inspect[Inspect vehicle and record diagnosis]
+    evidence[Record damaged parts and upload inspection photos]
+    specify[Specify required parts, labor, and repair time]
+  end
+
+  subgraph WorkshopOperations["Workshop Operations Administrator"]
+    prepare[Prepare itemized estimate from diagnosis and stock findings]
+    revise[Revise scope or mark unavailable items clearly]
   end
 
   subgraph System["System"]
-    calculate[Calculate estimated service cost]
-    generate[Save inspection and estimate]
-    notify[Send estimate for customer confirmation]
-    done((Done))
+    scope[Load stock for this workshop only; exclude pending units]
+    check[Check unit availability without reserving it yet]
+    available{Required parts available?}
+    shortage[Report unavailable parts to Operations Administrator]
+    calculate[Calculate parts, labor, and estimated completion time]
+    save[Save estimate version with diagnosis and photo evidence]
+    notify[Send estimate to customer for approval]
+    finish((End))
   end
 
-  start --> inspect --> parts --> calculate --> generate --> notify --> done
+  start --> inspect --> evidence --> specify --> scope --> check --> available
+  available -->|Yes| prepare
+  available -->|No| shortage --> revise --> prepare
+  prepare --> calculate --> save --> notify --> finish
