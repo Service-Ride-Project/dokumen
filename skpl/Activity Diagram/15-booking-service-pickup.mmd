@@ -1,0 +1,20 @@
+swimlane-beta TB
+  subgraph UserandOperationalAdministrator["User / Operational Administrator"]
+    start([Start])
+    vehicle[Select or record customer vehicle]
+    address[Enter pickup address and preferred schedule]
+    revise[Change address or schedule]
+  end
+
+  subgraph System["System"]
+    check[Check pickup coverage and availability]
+    valid{Pickup available?}
+    create[Create pickup booking request]
+    error[Show pickup constraints]
+    queue[Send booking for confirmation]
+    done((Done))
+  end
+
+  start --> vehicle --> address --> check --> valid
+  valid -->|No| error --> revise --> address
+  valid -->|Yes| create --> queue --> done

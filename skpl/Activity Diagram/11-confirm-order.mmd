@@ -1,0 +1,18 @@
+swimlane-beta TB
+  subgraph WorkshopWarehouse["Workshop Warehouse"]
+    start([Start])
+    review[Review order items and availability]
+    approve{Can fulfill order?}
+  end
+
+  subgraph System["System"]
+    load[Load pending order]
+    reserve[Reserve inventory and confirm order]
+    reject[Mark order unable to fulfill]
+    notify[Notify customer or onsite staff]
+    done((Done))
+  end
+
+  start --> load --> review --> approve
+  approve -->|Yes| reserve --> notify --> done
+  approve -->|No| reject --> notify

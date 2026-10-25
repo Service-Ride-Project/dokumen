@@ -1,0 +1,23 @@
+swimlane-beta TB
+  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+    start([Start])
+    assign[Schedule pickup and assign driver]
+  end
+
+  subgraph WorkshopDriver["Workshop Driver"]
+    accept[Review pickup assignment]
+    collect[Travel to pickup and verify vehicle handover]
+    success{Vehicle collected?}
+    issue[Report unsuccessful pickup]
+    deliver[Deliver vehicle to workshop]
+  end
+
+  subgraph System["System"]
+    update[Update pickup and arrival status]
+    reschedule[Notify operations for rescheduling]
+    done((Done))
+  end
+
+  start --> assign --> accept --> collect --> success
+  success -->|No| issue --> reschedule --> done
+  success -->|Yes| deliver --> update --> done

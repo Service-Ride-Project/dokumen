@@ -1,0 +1,27 @@
+swimlane-beta TB
+  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+    start([Start])
+    arrange[Arrange return after service completion]
+  end
+
+  subgraph WorkshopDriver["Workshop Driver"]
+    pickup[Collect serviced vehicle from workshop]
+    deliver[Drive to customer and request handover]
+    success{Handover successful?}
+    fail[Report failed handover]
+  end
+
+  subgraph System["System"]
+    check[Verify return eligibility]
+    eligible{Vehicle ready for return?}
+    hold[Hold return and notify operations]
+    update[Record completed vehicle return]
+    reschedule[Notify operations to reschedule]
+    done((Done))
+  end
+
+  start --> check --> eligible
+  eligible -->|No| hold --> done
+  eligible -->|Yes| arrange --> pickup --> deliver --> success
+  success -->|No| fail --> reschedule --> done
+  success -->|Yes| update --> done

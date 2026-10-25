@@ -1,0 +1,17 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    review[Review repair scope and estimate]
+    decision{Approve estimate?}
+  end
+
+  subgraph System["System"]
+    load[Display estimate]
+    approve[Record approval and authorize service]
+    reject[Record rejection and notify workshop]
+    done((Done))
+  end
+
+  start --> load --> review --> decision
+  decision -->|Yes| approve --> done
+  decision -->|No| reject --> done

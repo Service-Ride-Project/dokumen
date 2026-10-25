@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+    start([Start])
+    pick[Select confirmed booking and technician]
+    retry[Choose another technician]
+  end
+
+  subgraph System["System"]
+    check[Check skill and schedule availability]
+    available{Technician available?}
+    assign[Assign technician to booking]
+    error[Show assignment conflict]
+    notify[Notify technician]
+    done((Done))
+  end
+
+  start --> pick --> check --> available
+  available -->|No| error --> retry --> pick
+  available -->|Yes| assign --> notify --> done

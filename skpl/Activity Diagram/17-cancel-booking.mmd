@@ -1,0 +1,22 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    request[Choose booking and request cancellation]
+  end
+
+  subgraph System["System"]
+    check[Check booking status and cancellation policy]
+    allowed{Cancellation allowed?}
+    cancel[Cancel booking and release slot]
+    deny[Explain restriction]
+    pickup{Pickup already assigned?}
+    release[Notify operations to cancel pickup]
+    notify[Notify booking participants]
+    done((Done))
+  end
+
+  start --> request --> check --> allowed
+  allowed -->|No| deny --> done
+  allowed -->|Yes| cancel --> pickup
+  pickup -->|Yes| release --> notify --> done
+  pickup -->|No| notify

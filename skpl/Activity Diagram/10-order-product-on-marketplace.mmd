@@ -1,0 +1,20 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    browse[Browse products and add to cart]
+    checkout[Provide delivery details and place order]
+    revise[Change cart or address]
+  end
+
+  subgraph System["System"]
+    check[Validate stock and checkout details]
+    valid{Order valid?}
+    create[Create marketplace order]
+    error[Show issue]
+    notify[Notify workshop warehouse]
+    done((Done))
+  end
+
+  start --> browse --> checkout --> check --> valid
+  valid -->|No| error --> revise --> checkout
+  valid -->|Yes| create --> notify --> done

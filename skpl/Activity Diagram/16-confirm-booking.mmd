@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+    start([Start])
+    review[Review booking and capacity]
+    decision{Can accept booking?}
+    reason[Record rejection reason]
+  end
+
+  subgraph System["System"]
+    load[Load pending booking]
+    confirm[Confirm booking and reserve slot]
+    reject[Reject booking request]
+    notify[Notify user]
+    done((Done))
+  end
+
+  start --> load --> review --> decision
+  decision -->|Yes| confirm --> notify --> done
+  decision -->|No| reason --> reject --> notify

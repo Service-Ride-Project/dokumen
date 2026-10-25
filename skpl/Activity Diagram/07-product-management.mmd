@@ -1,0 +1,23 @@
+swimlane-beta TB
+  subgraph WorkshopWarehouse["Workshop Warehouse"]
+    start([Start])
+    action{Choose product action}
+    edit[Enter product data]
+    remove[Select product to deactivate]
+    correct[Correct product data]
+  end
+
+  subgraph System["System"]
+    check[Validate product data]
+    valid{Data valid?}
+    save[Save product changes]
+    deactivate[Deactivate product listing]
+    show[Refresh product catalog]
+    done((Done))
+  end
+
+  start --> action
+  action -->|Create or update| edit --> check --> valid
+  valid -->|No| correct --> edit
+  valid -->|Yes| save --> show --> done
+  action -->|Deactivate| remove --> deactivate --> show

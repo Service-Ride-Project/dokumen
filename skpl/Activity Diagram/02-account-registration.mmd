@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    form[Enter registration details]
+    correct[Correct details]
+  end
+
+  subgraph System["System"]
+    check[Validate data and email uniqueness]
+    ok{Valid and unique?}
+    save[Create unverified account]
+    error[Show validation errors]
+    verification[Start account verification]
+    done((Done))
+  end
+
+  start --> form --> check --> ok
+  ok -->|No| error --> correct --> form
+  ok -->|Yes| save --> verification --> done

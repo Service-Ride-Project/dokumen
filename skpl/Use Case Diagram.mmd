@@ -1,0 +1,122 @@
+usecase-beta
+direction LR
+
+actor SuperAdmin("Super Admin")
+actor User("User")
+
+actor WorkshopOwner("Workshop Owner")
+actor WorkshopWarehouse("Workshop Warehouse")
+actor WorkshopOperationalAdministrator("Workshop Operational Administrator")
+actor WorkshopTechnician("Workshop Technician")
+actor WorkshopDriver("Workshop Driver")
+
+systemBoundary ServiceRide["Service Ride"]@{ type: package }:::system
+
+    Login("Account Login")
+    Register("Account Registration")
+    Verify("Account Verification")
+
+    RegisterWorkshop("Register Workshop")
+    VerifyWorkshop("Verify Workshop")
+    EmployeeManagement("Employee Management")
+
+    ManagementProduct("Product Management")
+    ManageInventory("Manage Inventory")
+    OrderProductOnsite("Order Product Onsite")
+    OrderProductMarketplace("Order Product on Marketplace")
+    ConfirmOrder("Confirm Order")
+    CancelOrder("Cancel Order")
+
+    ManageVehicle("Manage Vehicle")
+    BookingServiceOnsite("Booking Service Onsite")
+    BookingServicePickup("Booking Service Pickup")
+    ConfirmBooking("Confirm Booking")
+    CancelBooking("Cancel Booking")
+    ViewOrderBookingStatus("View Order and Booking Status")
+    AssignTechnician("Assign Technician")
+
+    VehicleInspectionService("Vehicle Inspection and Cost Estimation")
+    ConfirmEstimateCost("Confirm Estimated Cost")
+    ConfirmComplete("Confirm Service Completion")
+    PickupVehicleService("Pickup Vehicle for Service")
+    ReturnVehicleService("Return Vehicle After Service")
+
+    Payment("Payment")
+    ConfirmPayment("Confirm Payment")
+
+    Invoice("Generate Invoice")
+
+end
+
+SuperAdmin --> Login
+SuperAdmin --> VerifyWorkshop
+SuperAdmin --> ConfirmPayment
+
+WorkshopOwner --> Login
+WorkshopOwner --> RegisterWorkshop
+WorkshopOwner --> EmployeeManagement
+
+WorkshopWarehouse --> Login
+WorkshopWarehouse --> ManagementProduct
+WorkshopWarehouse --> ManageInventory
+WorkshopWarehouse --> OrderProductOnsite
+WorkshopWarehouse --> ConfirmOrder
+
+WorkshopOperationalAdministrator --> Login
+WorkshopOperationalAdministrator --> BookingServiceOnsite
+WorkshopOperationalAdministrator --> BookingServicePickup
+WorkshopOperationalAdministrator --> ConfirmBooking
+WorkshopOperationalAdministrator --> AssignTechnician
+WorkshopOperationalAdministrator --> PickupVehicleService
+WorkshopOperationalAdministrator --> ReturnVehicleService
+WorkshopOperationalAdministrator --> Payment
+WorkshopOperationalAdministrator --> Invoice
+
+WorkshopTechnician --> Login
+WorkshopTechnician --> VehicleInspectionService
+WorkshopTechnician --> ConfirmComplete
+
+WorkshopDriver --> Login
+WorkshopDriver --> PickupVehicleService
+WorkshopDriver --> ReturnVehicleService
+
+User --> Login
+User --> Register
+User --> ManageVehicle
+User --> OrderProductMarketplace
+User --> CancelOrder
+User --> BookingServiceOnsite
+User --> BookingServicePickup
+User --> CancelBooking
+User --> ViewOrderBookingStatus
+User --> ConfirmEstimateCost
+User --> Payment
+
+Register ..> : include Verify
+
+VerifyWorkshop ..> : extend RegisterWorkshop
+
+ManageInventory ..> : extend ManagementProduct
+
+ConfirmOrder ..> : extend OrderProductOnsite
+ConfirmOrder ..> : extend OrderProductMarketplace
+CancelOrder ..> : extend OrderProductMarketplace
+
+ConfirmBooking ..> : extend BookingServiceOnsite
+ConfirmBooking ..> : extend BookingServicePickup
+CancelBooking ..> : extend BookingServiceOnsite
+CancelBooking ..> : extend BookingServicePickup
+
+BookingServiceOnsite ..> : include ManageVehicle
+BookingServicePickup ..> : include ManageVehicle
+
+PickupVehicleService ..> : extend BookingServicePickup
+ReturnVehicleService ..> : extend BookingServicePickup
+
+AssignTechnician ..> : extend ConfirmBooking
+
+ConfirmEstimateCost ..> : extend VehicleInspectionService
+ConfirmComplete ..> : extend VehicleInspectionService
+
+ConfirmPayment ..> : extend Payment
+Invoice ..> : extend ConfirmPayment

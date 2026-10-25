@@ -1,0 +1,23 @@
+swimlane-beta TB
+  subgraph WorkshopOwner["Workshop Owner"]
+    start([Start])
+    choose{Choose employee action}
+    details[Enter employee details or changes]
+    select[Select employee to deactivate]
+    fix[Correct employee information]
+  end
+
+  subgraph System["System"]
+    validate[Validate role and employee data]
+    valid{Valid data?}
+    save[Create or update employee]
+    disable[Deactivate employee access]
+    result[Show updated employee list]
+    done((Done))
+  end
+
+  start --> choose
+  choose -->|Add or edit| details --> validate --> valid
+  valid -->|No| fix --> details
+  valid -->|Yes| save --> result --> done
+  choose -->|Deactivate| select --> disable --> result

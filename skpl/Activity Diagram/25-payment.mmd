@@ -1,0 +1,20 @@
+swimlane-beta TB
+  subgraph UserandOperationalAdministrator["User / Operational Administrator"]
+    start([Start])
+    select[Select payable order or service invoice]
+    method[Choose payment method and submit payment]
+    retry[Try again or change method]
+  end
+
+  subgraph SystemandPaymentGateway["System / Payment Gateway"]
+    calculate[Calculate payable amount]
+    process[Process payment]
+    ok{Payment successful?}
+    failed[Show payment failure]
+    record[Record payment transaction]
+    done((Done))
+  end
+
+  start --> select --> calculate --> method --> process --> ok
+  ok -->|No| failed --> retry --> method
+  ok -->|Yes| record --> done

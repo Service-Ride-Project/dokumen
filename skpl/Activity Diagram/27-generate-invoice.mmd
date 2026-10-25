@@ -1,0 +1,18 @@
+swimlane-beta TB
+  subgraph WorkshopOperationalAdministrator["Workshop Operational Administrator"]
+    start([Start])
+    request[Request invoice for completed transaction]
+  end
+
+  subgraph System["System"]
+    check[Check transaction and payment records]
+    valid{Invoice requirements satisfied?}
+    generate[Generate numbered invoice]
+    reject[Show missing requirements]
+    send[Save invoice and provide to customer]
+    done((Done))
+  end
+
+  start --> request --> check --> valid
+  valid -->|No| reject --> done
+  valid -->|Yes| generate --> send --> done

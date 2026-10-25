@@ -1,0 +1,23 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    choose{Choose vehicle action}
+    details[Enter or update vehicle information]
+    remove[Select vehicle to remove]
+    fix[Correct vehicle details]
+  end
+
+  subgraph System["System"]
+    check[Validate vehicle information]
+    valid{Valid?}
+    save[Save vehicle record]
+    archive[Archive vehicle if permitted]
+    list[Show updated vehicle list]
+    done((Done))
+  end
+
+  start --> choose
+  choose -->|Add or update| details --> check --> valid
+  valid -->|No| fix --> details
+  valid -->|Yes| save --> list --> done
+  choose -->|Remove| remove --> archive --> list

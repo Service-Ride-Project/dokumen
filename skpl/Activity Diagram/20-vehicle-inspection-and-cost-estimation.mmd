@@ -1,0 +1,15 @@
+swimlane-beta TB
+  subgraph WorkshopTechnician["Workshop Technician"]
+    start([Start])
+    inspect[Inspect vehicle and record findings]
+    parts[Specify work items parts and labor]
+  end
+
+  subgraph System["System"]
+    calculate[Calculate estimated service cost]
+    generate[Save inspection and estimate]
+    notify[Send estimate for customer confirmation]
+    done((Done))
+  end
+
+  start --> inspect --> parts --> calculate --> generate --> notify --> done

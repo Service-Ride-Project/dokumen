@@ -1,0 +1,22 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    request[Choose order and request cancellation]
+  end
+
+  subgraph System["System"]
+    check[Check order status and policy]
+    allowed{Cancellation allowed?}
+    cancel[Cancel order and release reserved stock]
+    denied[Explain why cancellation is unavailable]
+    refund{Payment already captured?}
+    startrefund[Initiate refund workflow]
+    notify[Send cancellation notification]
+    done((Done))
+  end
+
+  start --> request --> check --> allowed
+  allowed -->|No| denied --> done
+  allowed -->|Yes| cancel --> refund
+  refund -->|Yes| startrefund --> notify --> done
+  refund -->|No| notify

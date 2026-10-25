@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph WorkshopWarehouse["Workshop Warehouse"]
+    start([Start])
+    add[Select products and quantities]
+    revise[Revise items]
+  end
+
+  subgraph System["System"]
+    stock[Check available stock]
+    available{Stock sufficient?}
+    draft[Create onsite sales order]
+    short[Show stock shortage]
+    confirm[Proceed to order confirmation]
+    done((Done))
+  end
+
+  start --> add --> stock --> available
+  available -->|No| short --> revise --> add
+  available -->|Yes| draft --> confirm --> done

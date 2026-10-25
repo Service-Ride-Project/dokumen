@@ -1,0 +1,22 @@
+swimlane-beta TB
+  subgraph UserandStaff["User / Staff"]
+    start([Start])
+    credentials[Enter email and password]
+    retry[Correct credentials]
+  end
+
+  subgraph System["System"]
+    validate[Validate credentials]
+    valid{Credentials valid?}
+    active{Account active?}
+    session[Create session]
+    error[Show login error]
+    blocked[Show account status]
+    done((Done))
+  end
+
+  start --> credentials --> validate --> valid
+  valid -->|No| error --> retry --> credentials
+  valid -->|Yes| active
+  active -->|No| blocked --> done
+  active -->|Yes| session --> done

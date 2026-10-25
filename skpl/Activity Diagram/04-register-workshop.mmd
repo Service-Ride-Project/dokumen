@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph WorkshopOwner["Workshop Owner"]
+    start([Start])
+    form[Enter workshop profile and documents]
+    revise[Revise workshop submission]
+  end
+
+  subgraph System["System"]
+    check[Validate required information]
+    valid{Submission complete?}
+    store[Save pending workshop registration]
+    errors[Show missing information]
+    queue[Notify Super Admin for review]
+    done((Done))
+  end
+
+  start --> form --> check --> valid
+  valid -->|No| errors --> revise --> form
+  valid -->|Yes| store --> queue --> done

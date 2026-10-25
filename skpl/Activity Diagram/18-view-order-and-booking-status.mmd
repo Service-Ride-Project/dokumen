@@ -1,0 +1,18 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    select{View orders or bookings?}
+    order[Select an order]
+    booking[Select a booking]
+  end
+
+  subgraph System["System"]
+    loadorder[Retrieve order status and timeline]
+    loadbooking[Retrieve booking status and timeline]
+    display[Display current status]
+    done((Done))
+  end
+
+  start --> select
+  select -->|Orders| order --> loadorder --> display --> done
+  select -->|Bookings| booking --> loadbooking --> display

@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph SuperAdmin["Super Admin"]
+    start([Start])
+    review[Review workshop data and documents]
+    decision{Approve workshop?}
+    reason[Record rejection reason]
+  end
+
+  subgraph System["System"]
+    load[Load pending workshop registration]
+    approve[Activate workshop]
+    reject[Mark workshop rejected]
+    notify[Notify workshop owner]
+    done((Done))
+  end
+
+  start --> load --> review --> decision
+  decision -->|Yes| approve --> notify --> done
+  decision -->|No| reason --> reject --> notify

@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph WorkshopWarehouse["Workshop Warehouse"]
+    start([Start])
+    select[Select product and stock adjustment]
+    correct[Correct adjustment]
+  end
+
+  subgraph System["System"]
+    check[Check product and adjustment]
+    valid{Adjustment valid?}
+    update[Update stock balance]
+    log[Record inventory movement]
+    error[Show inventory error]
+    done((Done))
+  end
+
+  start --> select --> check --> valid
+  valid -->|No| error --> correct --> select
+  valid -->|Yes| update --> log --> done

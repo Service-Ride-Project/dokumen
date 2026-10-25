@@ -1,0 +1,18 @@
+swimlane-beta TB
+  subgraph WorkshopTechnician["Workshop Technician"]
+    start([Start])
+    finish[Complete work and document results]
+    test[Perform final service checks]
+    passed{Checks passed?}
+    rework[Resolve outstanding issues]
+  end
+
+  subgraph System["System"]
+    complete[Record service completion]
+    notify[Notify operations and user]
+    done((Done))
+  end
+
+  start --> finish --> test --> passed
+  passed -->|No| rework --> test
+  passed -->|Yes| complete --> notify --> done

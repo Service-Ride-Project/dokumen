@@ -1,0 +1,19 @@
+swimlane-beta TB
+  subgraph User["User"]
+    start([Start])
+    code[Submit verification code]
+    retry[Request or enter new code]
+  end
+
+  subgraph System["System"]
+    send[Send verification code]
+    check[Validate code and expiration]
+    valid{Code valid?}
+    activate[Mark account verified]
+    fail[Show verification failure]
+    done((Done))
+  end
+
+  start --> send --> code --> check --> valid
+  valid -->|No| fail --> retry --> code
+  valid -->|Yes| activate --> done
