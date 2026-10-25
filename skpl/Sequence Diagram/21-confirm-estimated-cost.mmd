@@ -1,0 +1,27 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    Customer->>UI: Approve or reject the estimate
+    UI->>Service: Submit estimated cost approval request
+    Service->>Records: Recheck estimate version and current workshop stock
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Record the decision and reserve approved units as pending
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Allow work after payment is recorded
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Keep work blocked when approval or payment is missing
+        UI-->>Customer: Display the reason and required action
+    end
+    opt Workshop Operations Administrator participates in this use case
+        OperationsAdmin->>UI: Record external approval evidence when needed
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>OperationsAdmin: Return the recorded outcome
+    end

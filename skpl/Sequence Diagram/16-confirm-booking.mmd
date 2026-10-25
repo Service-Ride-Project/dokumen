@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    OperationsAdmin->>UI: Review the booking request and workshop capacity
+    UI->>Service: Submit booking confirmation request
+    Service->>Records: Check the selected slot and branch capacity
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Confirm or reject the booking
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Reserve the slot and notify Customer
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Record a reason when the booking is rejected
+        UI-->>OperationsAdmin: Display the reason and required action
+    end

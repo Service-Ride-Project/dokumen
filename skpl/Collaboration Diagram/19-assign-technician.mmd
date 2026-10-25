@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Workshop Operations Administrator"]
+    A2["Mechanic"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Select a confirmed booking and mechanic| UI
+    UI -->|2. Submit technician assignment request| Process
+    Process -->|3. Check mechanic skills and schedule| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Save the mechanic assignment| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Notify Mechanic of the assigned work| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Review and acknowledge assigned work| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records

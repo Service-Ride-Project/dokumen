@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor WorkshopOwner as Workshop Owner
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    WorkshopOwner->>UI: Submit workshop profile and legal documents
+    UI->>Service: Submit workshop registration request
+    Service->>Records: Check required workshop data and documents
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save the workshop as pending review
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Notify Super Admin
+        UI-->>WorkshopOwner: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return incomplete submission details
+        UI-->>WorkshopOwner: Display the reason and required action
+    end

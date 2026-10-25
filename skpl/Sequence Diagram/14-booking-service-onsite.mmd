@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    Customer->>UI: Choose a vehicle, workshop, service, and time slot
+    UI->>Service: Submit onsite service booking request
+    Service->>Records: Check workshop service and slot availability
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save an onsite booking request
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display the booking status
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return unavailable services or time slots
+        UI-->>Customer: Display the reason and required action
+    end

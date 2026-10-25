@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Workshop Warehouse Administrator"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Record a stock receipt or correction| UI
+    UI -->|2. Submit workshop inventory management request| Process
+    Process -->|3. Load stock for the selected workshop| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Update physical unit records and statuses| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Display available and pending units| UI
+    UI -->|8. Display the result and next step| A1

@@ -1,0 +1,27 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor Customer as Customer
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    OperationsAdmin->>UI: Record customer contact, vehicle, and service request
+    UI->>Service: Submit full offline service registration request
+    Service->>Records: Check required service details without requiring NIK
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Create or link a draft account and save the service history
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Continue to inspection, estimate, and payment
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Keep the draft account unverified until registration
+        UI-->>OperationsAdmin: Display the reason and required action
+    end
+    opt Customer participates in this use case
+        Customer->>UI: Provide contact and vehicle details or make payment
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>Customer: Return the recorded outcome
+    end

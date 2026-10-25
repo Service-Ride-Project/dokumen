@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Workshop Operations Administrator"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Review the booking request and workshop capacity| UI
+    UI -->|2. Submit booking confirmation request| Process
+    Process -->|3. Check the selected slot and branch capacity| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Confirm or reject the booking| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Reserve the slot and notify Customer| UI
+    UI -->|8. Display the result and next step| A1

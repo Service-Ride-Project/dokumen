@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    A2["Workshop Owner"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Write or edit a review for a completed transaction| UI
+    UI -->|2. Submit completed transaction review request| Process
+    Process -->|3. Check transaction completion and the 24-hour edit limit| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Save the review with customer identity hidden from Owner| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Allow Workshop Owner to post a public reply| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Post a public reply to the review| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records

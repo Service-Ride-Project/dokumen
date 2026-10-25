@@ -1,0 +1,26 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Super Admin"]
+    A2["Customer"]
+    A3["Workshop Owner"]
+    A4["Workshop Warehouse Administrator"]
+    A5["Workshop Operations Administrator"]
+    A6["Mechanic"]
+    A7["Pickup Service"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    Event["Service Ride Status Event"]
+    Notifier["Notification Service"]
+    Email["Email Service"]
+    Event -->|1. Trigger status update| Notifier
+    Notifier -->|2. Resolve event recipients| Records
+    Records -->|3. Return authorized roles| Notifier
+    Notifier -->|4. Send role-specific notification| A1
+    Notifier -->|5. Send role-specific notification| A2
+    Notifier -->|6. Send role-specific notification| A3
+    Notifier -->|7. Send role-specific notification| A4
+    Notifier -->|8. Send role-specific notification| A5
+    Notifier -->|9. Send role-specific notification| A6
+    Notifier -->|10. Send role-specific notification| A7
+    Notifier -.->|11. Send email when available| Email

@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor SuperAdmin as Super Admin
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    SuperAdmin->>UI: Review workshop legal documents
+    UI->>Service: Submit workshop verification request
+    Service->>Records: Check document status and review scope
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Record approval or rejection
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Update workshop activation status
+        UI-->>SuperAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Keep the workshop inactive and record the reason
+        UI-->>SuperAdmin: Display the reason and required action
+    end

@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Confirmed: Workshop accepts booking
+    Pending --> Cancelled: Booking rejected or cancelled
+    Confirmed --> Inspection: Vehicle received or customer arrives
+    Inspection --> WaitingApproval: Estimate submitted with evidence
+    WaitingApproval --> Inspection: Estimate revised before approval
+    WaitingApproval --> Cancelled: Customer rejects estimate
+    WaitingApproval --> Approved: Customer approves estimate
+    Approved --> InProgress: Service payment is recorded
+    InProgress --> Completed: Mechanic records completed work
+    Completed --> [*]
+    Cancelled --> [*]

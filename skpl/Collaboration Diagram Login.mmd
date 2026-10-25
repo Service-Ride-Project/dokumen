@@ -1,0 +1,32 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Super Admin"]
+    A2["Customer"]
+    A3["Workshop Owner"]
+    A4["Workshop Warehouse Administrator"]
+    A5["Workshop Operations Administrator"]
+    A6["Mechanic"]
+    A7["Pickup Service"]
+    Login["Login Interface"]
+    Auth["Authentication Service"]
+    Accounts[("Account Store")]
+    Access["Role-Based Access"]
+    Login -->|1. Submit credentials by role| Auth
+    Auth -->|2. Retrieve account and role status| Accounts
+    Accounts -->|3. Return account record| Auth
+    Auth -->|4. Validate credentials and account status| Auth
+    A1 -->|5. Submit role-specific credentials| Login
+    A2 -->|6. Submit role-specific credentials| Login
+    A3 -->|7. Submit role-specific credentials| Login
+    A4 -->|8. Submit role-specific credentials| Login
+    A5 -->|9. Submit role-specific credentials| Login
+    A6 -->|10. Submit role-specific credentials| Login
+    A7 -->|11. Submit role-specific credentials| Login
+    Auth -->|12. Create separate role-based session| A1
+    Auth -->|13. Create separate role-based session| A2
+    Auth -->|14. Create separate role-based session| A3
+    Auth -->|15. Create separate role-based session| A4
+    Auth -->|16. Create separate role-based session| A5
+    Auth -->|17. Create separate role-based session| A6
+    Auth -->|18. Create separate role-based session| A7
+    Auth -.->|19. Reject invalid or inactive account| Login

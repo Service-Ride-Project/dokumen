@@ -1,0 +1,26 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    alt Online payment
+        Customer->>UI: Pay for pickup, service, or marketplace order
+        UI->>Service: Submit Dummy QRIS payment request
+        Service->>Records: Check amount and transaction state
+        Records-->>Service: Return payment context
+        Service->>Records: Record confirmed online payment
+        Records-->>Service: Confirm payment status
+        Service-->>UI: Return payment or refund status
+        UI-->>Customer: Display the transaction result
+    else Cash payment
+        OperationsAdmin->>UI: Record cash received from Customer
+        UI->>Service: Submit partner-side cash payment
+        Service->>Records: Check amount and transaction state
+        Records-->>Service: Return payment context
+        Service->>Records: Save the cash payment record
+        Records-->>Service: Confirm payment status
+        Service-->>UI: Return recorded payment status
+        UI-->>OperationsAdmin: Display the transaction result
+    end

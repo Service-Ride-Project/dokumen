@@ -1,0 +1,22 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    A2["Workshop Operations Administrator"]
+    A3["Super Admin"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Request cancellation of the booking| UI
+    UI -->|2. Submit booking cancellation request| Process
+    Process -->|3. Check cancellation party, driver departure, and booking status| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Record cancellation and applicable refund or restriction| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Route eligible workshop cancellations for review| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Submit a workshop cancellation when applicable| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records
+    A3 -->|12. Review eligible post-departure cancellations| UI
+    UI -->|13. Submit role-specific response| Process
+    Process -->|14. Save the additional case action| Records

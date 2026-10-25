@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Super Admin"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Review workshop legal documents| UI
+    UI -->|2. Submit workshop verification request| Process
+    Process -->|3. Check document status and review scope| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Record approval or rejection| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Update workshop activation status| UI
+    UI -->|8. Display the result and next step| A1

@@ -1,0 +1,26 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    A2["Workshop Owner"]
+    A3["Workshop Operations Administrator"]
+    A4["Super Admin"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Submit a complaint and available evidence| UI
+    UI -->|2. Submit complaint and reported content handling request| Process
+    Process -->|3. Load transaction, work evidence, and audit records| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Save the case and record each review outcome| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Notify Customer of the resolution| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Review the complaint and propose a resolution| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records
+    A3 -->|12. Review operational records and evidence| UI
+    UI -->|13. Submit role-specific response| Process
+    Process -->|14. Save the additional case action| Records
+    A4 -->|15. Mediate unresolved disputes and moderate reported content| UI
+    UI -->|16. Submit role-specific response| Process
+    Process -->|17. Save the additional case action| Records

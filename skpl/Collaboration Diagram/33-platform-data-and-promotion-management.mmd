@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Super Admin"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Select platform data or a promotion and submit changes| UI
+    UI -->|2. Submit platform data and promotion management request| Process
+    Process -->|3. Validate completeness, uniqueness, and applicable rules| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Save the approved change and audit record| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Apply the platform data or promotion change| UI
+    UI -->|8. Display the result and next step| A1

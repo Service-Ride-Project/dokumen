@@ -1,0 +1,37 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor SuperAdmin as Super Admin
+    actor Customer as Customer
+    actor WorkshopOwner as Workshop Owner
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor Mechanic as Mechanic
+    actor PickupService as Pickup Service
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    participant Event as Status Event
+    participant Notifier as Notification Service
+    participant Email as Email Service
+    Event->>Notifier: Request role-specific status notifications
+    Notifier->>Records: Resolve recipients for this event
+    Records-->>Notifier: Return authorized roles and email availability
+    par Super Admin
+        Notifier-->>SuperAdmin: Send relevant application notification
+    and Customer
+        Notifier-->>Customer: Send relevant application notification
+    and Workshop Owner
+        Notifier-->>WorkshopOwner: Send relevant application notification
+    and Workshop Warehouse Administrator
+        Notifier-->>WarehouseAdmin: Send relevant application notification
+    and Workshop Operations Administrator
+        Notifier-->>OperationsAdmin: Send relevant application notification
+    and Mechanic
+        Notifier-->>Mechanic: Send relevant application notification
+    and Pickup Service
+        Notifier-->>PickupService: Send relevant application notification
+    end
+    opt An email address is available
+        Notifier->>Email: Send the related status email
+        Email-->>Notifier: Return delivery status
+    end

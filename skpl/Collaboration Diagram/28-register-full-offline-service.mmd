@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Workshop Operations Administrator"]
+    A2["Customer"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Record customer contact, vehicle, and service request| UI
+    UI -->|2. Submit full offline service registration request| Process
+    Process -->|3. Check required service details without requiring NIK| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Create or link a draft account and save the service history| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Continue to inspection, estimate, and payment| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Provide contact and vehicle details or make payment| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records

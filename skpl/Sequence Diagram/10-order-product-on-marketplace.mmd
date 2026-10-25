@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    Customer->>UI: Submit a cart, quantity, and delivery address
+    UI->>Service: Submit marketplace spare part order request
+    Service->>Records: Check active marketplace listings and available stock
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Reserve units and record successful Dummy QRIS payment
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Create and display the order
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Release reserved units if payment fails
+        UI-->>Customer: Display the reason and required action
+    end

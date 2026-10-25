@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    A2["Workshop Warehouse Administrator"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Submit a return request and evidence within one day| UI
+    UI -->|2. Submit marketplace return request| Process
+    Process -->|3. Check delivery time and return evidence| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Record the review decision| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Refund only after an approved return decision| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Review the return request and evidence| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records

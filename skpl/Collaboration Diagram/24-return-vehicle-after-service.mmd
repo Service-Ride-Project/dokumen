@@ -1,0 +1,22 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Workshop Operations Administrator"]
+    A2["Pickup Service"]
+    A3["Customer"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Arrange vehicle return after service completion| UI
+    UI -->|2. Submit vehicle return request| Process
+    Process -->|3. Check return eligibility and active pickup updates| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Record the customer handover or follow-up| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Display return completion status| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Deliver the vehicle and report location| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records
+    A3 -->|12. Confirm returned vehicle handover| UI
+    UI -->|13. Submit role-specific response| Process
+    Process -->|14. Save the additional case action| Records

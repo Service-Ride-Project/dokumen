@@ -27,7 +27,7 @@ swimlane-beta TB
   end
 
   start --> paid
-  paid -->|No| end
+  paid -->|No| finish
   paid -->|Yes| assign --> activate --> accept --> travel --> update --> stale
   stale -->|Yes| alert --> monitor --> update
   stale -->|No| sse --> success

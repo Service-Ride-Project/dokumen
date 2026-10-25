@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor WorkshopOwner as Workshop Owner
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    WorkshopOwner->>UI: Select a workshop, branch, and employee
+    UI->>Service: Submit employee and branch access management request
+    Service->>Records: Check owner scope and branch assignment
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save branch-specific employee access
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display updated employee permissions
+        UI-->>WorkshopOwner: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject access outside owned branches
+        UI-->>WorkshopOwner: Display the reason and required action
+    end

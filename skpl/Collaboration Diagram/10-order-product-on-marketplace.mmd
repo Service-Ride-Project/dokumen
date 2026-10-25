@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Submit a cart, quantity, and delivery address| UI
+    UI -->|2. Submit marketplace spare part order request| Process
+    Process -->|3. Check active marketplace listings and available stock| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Reserve units and record successful Dummy QRIS payment| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Create and display the order| UI
+    UI -->|8. Display the result and next step| A1

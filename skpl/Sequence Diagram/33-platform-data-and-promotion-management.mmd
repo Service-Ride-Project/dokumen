@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor SuperAdmin as Super Admin
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    SuperAdmin->>UI: Select platform data or a promotion and submit changes
+    UI->>Service: Submit platform data and promotion management request
+    Service->>Records: Validate completeness, uniqueness, and applicable rules
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save the approved change and audit record
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Apply the platform data or promotion change
+        UI-->>SuperAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return invalid fields for correction
+        UI-->>SuperAdmin: Display the reason and required action
+    end

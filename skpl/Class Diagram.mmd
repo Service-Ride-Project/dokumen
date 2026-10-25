@@ -1,0 +1,128 @@
+%%{init: {"theme": "redux-color"}}%%
+classDiagram
+    class User {
+        +UUID id
+        +string name
+        +string email
+        +role role
+        +account_status accountStatus
+        +bool isVerified
+    }
+    class Workshop {
+        +UUID id
+        +string name
+        +workshop_status status
+        +bool marketplaceEnabled
+    }
+    class WorkshopDocument {
+        +UUID id
+        +document_status status
+        +string note
+    }
+    class WorkshopUserManagement {
+        +UUID id
+        +workshop_staff_role role
+        +bool isActive
+    }
+    class Vehicle {
+        +UUID id
+        +string plateNumber
+        +string brand
+        +string model
+        +vehicle_type type
+    }
+    class Booking {
+        +UUID id
+        +booking_type type
+        +booking_status status
+        +datetime scheduledAt
+        +decimal estimatedTotal
+    }
+    class BookingService {
+        +UUID id
+        +string diagnosis
+        +decimal laborPrice
+        +booking_service_status status
+    }
+    class BookingPickup {
+        +UUID id
+        +pickup_type type
+        +pickup_status status
+        +decimal pickupFee
+    }
+    class BookingPickupHistory {
+        +UUID id
+        +pickup_history_status status
+        +datetime recordedAt
+    }
+    class Product {
+        +UUID id
+        +string sku
+        +string name
+        +decimal price
+    }
+    class ProductStock {
+        +UUID id
+        +string serialNumber
+        +product_stock_status status
+    }
+    class MarketplaceTransaction {
+        +UUID id
+        +string transactionCode
+        +marketplace_order_status status
+        +decimal totalAmount
+    }
+    class MarketplaceTransactionDetail {
+        +UUID id
+        +int quantity
+        +decimal unitPrice
+        +marketplace_item_status status
+    }
+    class Payment {
+        +UUID id
+        +payment_type type
+        +payment_method method
+        +payment_status status
+        +decimal amount
+    }
+    class Review {
+        +UUID id
+        +int rating
+        +string comment
+        +string ownerReply
+    }
+    class EstimateDocument {
+        <<conceptual>>
+        +UUID id
+        +decimal total
+        +datetime estimatedFinishAt
+    }
+    class Invoice {
+        <<conceptual>>
+        +UUID id
+        +string invoiceNumber
+        +decimal finalTotal
+    }
+
+    User "1" --> "0..*" Workshop : owns
+    Workshop "1" --> "0..*" WorkshopDocument : verifies
+    User "1" --> "0..*" WorkshopUserManagement : assigned
+    Workshop "1" --> "0..*" WorkshopUserManagement : employs
+    User "1" --> "0..*" Vehicle : owns
+    User "1" --> "0..*" Booking : requests
+    Workshop "1" --> "0..*" Booking : receives
+    Vehicle "1" --> "0..*" Booking : serviced in
+    Booking "1" --> "0..*" BookingService : records
+    Booking "1" --> "0..*" BookingPickup : schedules
+    BookingPickup "1" --> "0..*" BookingPickupHistory : tracks
+    Workshop "1" --> "0..*" Product : lists
+    Product "1" --> "0..*" ProductStock : contains
+    User "1" --> "0..*" MarketplaceTransaction : places
+    MarketplaceTransaction "1" --> "1..*" MarketplaceTransactionDetail : contains
+    Product "1" --> "0..*" MarketplaceTransactionDetail : sold as
+    Booking "0..1" --> "0..*" Payment : paid by
+    MarketplaceTransaction "0..1" --> "0..*" Payment : paid by
+    Booking "1" --> "0..*" EstimateDocument : estimates
+    Booking "1" --> "0..1" Invoice : produces
+    User "1" --> "0..*" Review : writes
+    Workshop "1" --> "0..*" Review : receives

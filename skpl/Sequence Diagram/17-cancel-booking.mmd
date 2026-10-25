@@ -1,0 +1,35 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor SuperAdmin as Super Admin
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    Customer->>UI: Request cancellation of the booking
+    UI->>Service: Submit booking cancellation request
+    Service->>Records: Check cancellation party, driver departure, and booking status
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Record cancellation and applicable refund or restriction
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Route eligible workshop cancellations for review
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject cancellation that is no longer allowed
+        UI-->>Customer: Display the reason and required action
+    end
+    opt Workshop Operations Administrator participates in this use case
+        OperationsAdmin->>UI: Submit a workshop cancellation when applicable
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>OperationsAdmin: Return the recorded outcome
+    end
+    opt Super Admin participates in this use case
+        SuperAdmin->>UI: Review eligible post-departure cancellations
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>SuperAdmin: Return the recorded outcome
+    end

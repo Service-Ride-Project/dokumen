@@ -1,0 +1,22 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Workshop Operations Administrator"]
+    A2["Pickup Service"]
+    A3["Customer"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Assign Pickup Service after pickup fee payment| UI
+    UI -->|2. Submit vehicle pickup request| Process
+    Process -->|3. Check payment and pickup task status| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Activate the pickup task and location tracking| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Record vehicle arrival at the workshop| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Accept the task and report location and handover| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records
+    A3 -->|12. Confirm vehicle handover to Pickup Service| UI
+    UI -->|13. Submit role-specific response| Process
+    Process -->|14. Save the additional case action| Records

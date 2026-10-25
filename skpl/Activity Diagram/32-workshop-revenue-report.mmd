@@ -1,0 +1,17 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph WorkshopOwner["Workshop Owner"]
+    start([Start])
+    select[Select reporting period and workshop]
+    request[Request revenue report]
+  end
+
+  subgraph System["System"]
+    scope[Check owner access and workshop scope]
+    load[Load matching service and marketplace payments]
+    aggregate[Separate cash and online totals]
+    display[Display workshop revenue report]
+    finish((End))
+  end
+
+  start --> select --> request --> scope --> load --> aggregate --> display --> finish

@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    WarehouseAdmin->>UI: Create, update, or deactivate a part listing
+    UI->>Service: Submit spare part catalog management request
+    Service->>Records: Validate product details and workshop scope
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save the catalog change
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Refresh the workshop catalog
+        UI-->>WarehouseAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return product validation errors
+        UI-->>WarehouseAdmin: Display the reason and required action
+    end

@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor SuperAdmin as Super Admin
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    SuperAdmin->>UI: Review payment record or manual evidence
+    UI->>Service: Submit payment confirmation request
+    Service->>Records: Check payment amount and evidence validity
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Confirm payment or flag it for follow-up
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Record the decision in the audit trail
+        UI-->>SuperAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Keep unverified payment pending review
+        UI-->>SuperAdmin: Display the reason and required action
+    end

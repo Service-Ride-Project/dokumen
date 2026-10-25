@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    OperationsAdmin->>UI: Request the final service invoice
+    UI->>Service: Submit final invoice generation request
+    Service->>Records: Check service completion, approved estimate, and payment
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Create a final invoice separate from the estimate
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Provide the invoice to Customer
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Block invoice generation when required records are missing
+        UI-->>OperationsAdmin: Display the reason and required action
+    end

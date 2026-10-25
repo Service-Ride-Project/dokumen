@@ -1,0 +1,48 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph System["System"]
+    start([Start])
+    event[Receive a Service Ride process status event]
+    resolve[Identify authorized recipients for the event]
+    recipient{Which role follows this process?}
+    record[Record notification delivery status]
+    finish((End))
+  end
+
+  subgraph SuperAdmin["Super Admin"]
+    notifySuper[Receive relevant application notification]
+  end
+
+  subgraph Customer["Customer"]
+    notifyCustomer[Receive relevant application notification]
+  end
+
+  subgraph WorkshopOwner["Workshop Owner"]
+    notifyOwner[Receive relevant application notification]
+  end
+
+  subgraph WarehouseAdmin["Workshop Warehouse Administrator"]
+    notifyWarehouse[Receive relevant application notification]
+  end
+
+  subgraph OperationsAdmin["Workshop Operations Administrator"]
+    notifyOperations[Receive relevant application notification]
+  end
+
+  subgraph Mechanic["Mechanic"]
+    notifyMechanic[Receive relevant application notification]
+  end
+
+  subgraph PickupService["Pickup Service"]
+    notifyPickup[Receive relevant application notification]
+  end
+
+  start --> event --> resolve --> recipient
+  recipient -->|Super Admin| notifySuper --> record
+  recipient -->|Customer| notifyCustomer --> record
+  recipient -->|Workshop Owner| notifyOwner --> record
+  recipient -->|Workshop Warehouse Administrator| notifyWarehouse --> record
+  recipient -->|Workshop Operations Administrator| notifyOperations --> record
+  recipient -->|Mechanic| notifyMechanic --> record
+  recipient -->|Pickup Service| notifyPickup --> record
+  record --> finish

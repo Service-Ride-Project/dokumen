@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    A2["Workshop Operations Administrator"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Pay online or provide cash payment details| UI
+    UI -->|2. Submit permitted payment request| Process
+    Process -->|3. Check amount and transaction state| Records
+    Records -->|4. Return payment context| Process
+    Process -->|5. Save payment or refund status| Records
+    Records -->|6. Confirm transaction result| Process
+    Process -->|7. Return payment status| UI
+    UI -->|8. Display the payment result| A1
+    A2 -->|9. Record cash in the partner interface| UI
+    UI -->|10. Submit cash payment record| Process
+    Process -->|11. Link payment to transaction| Records

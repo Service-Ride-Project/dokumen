@@ -1,0 +1,21 @@
+%%{init: {"theme": "redux-color"}}%%
+swimlane-beta TB
+  subgraph SuperAdmin["Super Admin"]
+    start([Start])
+    choose[Choose platform data or promotion]
+    edit[Enter or update values]
+    correct[Correct rejected values]
+  end
+
+  subgraph System["System"]
+    validate[Validate completeness and rules]
+    valid{Values valid?}
+    save[Save approved change]
+    audit[Record actor time and action]
+    apply[Apply platform data or promotion]
+    finish((End))
+  end
+
+  start --> choose --> edit --> validate --> valid
+  valid -->|No| correct --> edit
+  valid -->|Yes| save --> audit --> apply --> finish

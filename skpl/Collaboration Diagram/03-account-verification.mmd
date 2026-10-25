@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Submit the verification code| UI
+    UI -->|2. Submit account verification request| Process
+    Process -->|3. Check code match and expiration| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Activate email verification| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Display the verified account status| UI
+    UI -->|8. Display the result and next step| A1

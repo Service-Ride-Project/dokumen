@@ -1,0 +1,35 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor PickupService as Pickup Service
+    actor Customer as Customer
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    OperationsAdmin->>UI: Arrange vehicle return after service completion
+    UI->>Service: Submit vehicle return request
+    Service->>Records: Check return eligibility and active pickup updates
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Record the customer handover or follow-up
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display return completion status
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Hold the return when service is incomplete
+        UI-->>OperationsAdmin: Display the reason and required action
+    end
+    opt Pickup Service participates in this use case
+        PickupService->>UI: Deliver the vehicle and report location
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>PickupService: Return the recorded outcome
+    end
+    opt Customer participates in this use case
+        Customer->>UI: Confirm returned vehicle handover
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>Customer: Return the recorded outcome
+    end

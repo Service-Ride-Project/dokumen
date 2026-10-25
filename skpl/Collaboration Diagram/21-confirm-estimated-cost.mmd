@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    A2["Workshop Operations Administrator"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Approve or reject the estimate| UI
+    UI -->|2. Submit estimated cost approval request| Process
+    Process -->|3. Recheck estimate version and current workshop stock| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Record the decision and reserve approved units as pending| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Allow work after payment is recorded| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Record external approval evidence when needed| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records

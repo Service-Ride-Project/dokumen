@@ -1,0 +1,18 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Mechanic"]
+    A2["Workshop Operations Administrator"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Record diagnosis, photos, parts, and labor needs| UI
+    UI -->|2. Submit vehicle inspection and cost estimation request| Process
+    Process -->|3. Check stock at the same workshop and exclude pending units| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Save an estimate version without reserving stock| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Send the estimate to Customer for approval| UI
+    UI -->|8. Display the result and next step| A1
+    A2 -->|9. Prepare the estimate from inspection and stock results| UI
+    UI -->|10. Submit role-specific response| Process
+    Process -->|11. Save the additional case action| Records

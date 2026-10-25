@@ -1,0 +1,27 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor Mechanic as Mechanic
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    OperationsAdmin->>UI: Select a confirmed booking and mechanic
+    UI->>Service: Submit technician assignment request
+    Service->>Records: Check mechanic skills and schedule
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save the mechanic assignment
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Notify Mechanic of the assigned work
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return a conflict when the mechanic is unavailable
+        UI-->>OperationsAdmin: Display the reason and required action
+    end
+    opt Mechanic participates in this use case
+        Mechanic->>UI: Review and acknowledge assigned work
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>Mechanic: Return the recorded outcome
+    end

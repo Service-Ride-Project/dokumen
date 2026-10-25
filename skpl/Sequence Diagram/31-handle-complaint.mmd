@@ -1,0 +1,43 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    actor WorkshopOwner as Workshop Owner
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor SuperAdmin as Super Admin
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    Customer->>UI: Submit a complaint and available evidence
+    UI->>Service: Submit complaint and reported content handling request
+    Service->>Records: Load transaction, work evidence, and audit records
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Save the case and record each review outcome
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Notify Customer of the resolution
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Escalate unresolved disputes to Super Admin
+        UI-->>Customer: Display the reason and required action
+    end
+    opt Workshop Owner participates in this use case
+        WorkshopOwner->>UI: Review the complaint and propose a resolution
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>WorkshopOwner: Return the recorded outcome
+    end
+    opt Workshop Operations Administrator participates in this use case
+        OperationsAdmin->>UI: Review operational records and evidence
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>OperationsAdmin: Return the recorded outcome
+    end
+    opt Super Admin participates in this use case
+        SuperAdmin->>UI: Mediate unresolved disputes and moderate reported content
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>SuperAdmin: Return the recorded outcome
+    end

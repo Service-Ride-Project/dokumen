@@ -1,0 +1,27 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor Customer as Customer
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    Customer->>UI: Submit a return request and evidence within one day
+    UI->>Service: Submit marketplace return request
+    Service->>Records: Check delivery time and return evidence
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Record the review decision
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Refund only after an approved return decision
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject a late request or insufficient evidence
+        UI-->>Customer: Display the reason and required action
+    end
+    opt Workshop Warehouse Administrator participates in this use case
+        WarehouseAdmin->>UI: Review the return request and evidence
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>WarehouseAdmin: Return the recorded outcome
+    end

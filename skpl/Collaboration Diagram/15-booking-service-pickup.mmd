@@ -1,0 +1,14 @@
+%%{init: {"theme": "redux-color"}}%%
+flowchart LR
+    A1["Customer"]
+    UI["Service Ride Interface"]
+    Process["Application Process"]
+    Records[("Service Ride Records")]
+    A1 -->|1. Submit vehicle, pickup address, and schedule| UI
+    UI -->|2. Submit pickup service booking request| Process
+    Process -->|3. Check service coverage and pickup fee| Records
+    Records -->|4. Return current case records| Process
+    Process -->|5. Save the booking after pickup fee payment| Records
+    Records -->|6. Confirm saved or calculated result| Process
+    Process -->|7. Display the pickup booking status| UI
+    UI -->|8. Display the result and next step| A1

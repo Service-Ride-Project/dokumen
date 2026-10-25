@@ -1,0 +1,19 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    participant UI as Service Ride Interface
+    participant Service as Application Service
+    participant Records as Service Ride Records
+    WarehouseAdmin->>UI: Record a stock receipt or correction
+    UI->>Service: Submit workshop inventory management request
+    Service->>Records: Load stock for the selected workshop
+    Records-->>Service: Return current records and validation result
+    alt Request satisfies the business rules
+        Service->>Records: Update physical unit records and statuses
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display available and pending units
+        UI-->>WarehouseAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject a correction outside the assigned workshop
+        UI-->>WarehouseAdmin: Display the reason and required action
+    end
