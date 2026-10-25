@@ -380,12 +380,92 @@ Deskripsi	: Dengan melakukan proses ini admin, karyawan gudang dan kasir dapat m
 == Deskripsi Kelas-kelas
 === Diagram Kelas
 === Deskripsi Domain Persoalan
+#figure(
+  table(
+    columns: (10%, 22.5%, 22.5%, 22.5%, 22.5%),
+
+    [No.], [Nama], [Metode], [Atribute], [Tugas],
+    [1], [-], [-], [-],
+  ),
+  caption: [Deskripsi Kelas Domain Persoalan],
+)
+
 === Deskripsi Kelas Pengendali
+#figure(
+  table(
+    columns: (10%, 22.5%, 22.5%, 22.5%, 22.5%),
+
+    [No.], [Nama], [Metode], [Atribute], [Tugas],
+    [1], [-], [-], [-],
+  ),
+  caption: [Deskripsi Kelas Pengendali],
+)
+
 === Deskripsi Kelas Entity (Persisten)
+#figure(
+  table(
+    columns: (10%, 22.5%, 22.5%, 22.5%, 22.5%),
+
+    [No.], [Nama], [Atribute], [Metode], [Tugas],
+    [1], [-], [-], [-],
+  ),
+  caption: [Deskripsi Kelas Entity],
+)
+
 === Deskripsi Kelas Boundary
+#figure(
+  table(
+    columns: (10%, 22.5%, 22.5%, 22.5%, 22.5%),
+
+    [No.], [Nama], [Atribute], [Metode], [Tugas],
+    [1], [-], [-], [-],
+  ),
+  caption: [Deskripsi Kelas Entity],
+)
 == Deskripsi Perilaku Sistem
+tuliskan statechart diagram disini
+
 == Kebutuhan Non Fungsional
+#figure(
+  table(
+    columns: (20%, 20%, 60%),
+
+    [SKPL-Id], [Parameter], [Kebutuhan],
+    table.cell(align: center + horizon)[1 -SKPL-N01],
+    table.cell(align: center + horizon)[Availability],
+    table.cell(
+      align: left + horizon,
+    )[Aplikasi ini harus dapat beroperasi terus menerus selama 7 hari per minggu, 24 jam per hari tanpa berhenti, karena aplikasi ini akan bersifat web-based dan akan diakses oleh mahasiswa yang membutuhkan dari berbagai tempat pada waktu yang berbeda-beda.],
+  ),
+  caption: [Deskripsi Kebutuhan Non Fungsional],
+)
+
 == Batasan Perancangan
 == Ringkasan Kebutuhan
 === Ringkasan Kebutuhan Fungsional
-=== Ringkasan Kebutuhan Non Fungsional
+#figure(
+  table(
+    columns: (40%, 60%),
+
+    [SKPL-Id], [Keterangan],
+    table.cell(align: center + horizon)[SKPL-F000],
+    table.cell(
+      align: left + horizon,
+    )[menerima data User Id dan Password dari pengguna dan mem-validasinya],
+  ),
+  caption: [Deskripsi Kebutuhan Fungsional],
+)
+
+=== Ringkasan Kebutuhan Fungsional
+#figure(
+  table(
+    columns: (40%, 60%),
+
+    [SKPL-Id], [Keterangan],
+    table.cell(align: center + horizon)[SKPL-F000],
+    table.cell(
+      align: left + horizon,
+    )[menerima data User Id dan Password dari pengguna dan mem-validasinya],
+  ),
+  caption: [Deskripsi Kebutuhan Non Fungsional],
+)
