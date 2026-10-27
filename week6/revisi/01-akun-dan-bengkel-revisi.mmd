@@ -1,0 +1,111 @@
+classDiagram
+    direction TB
+    class User {
+        +UUID id
+        +string name
+        -string email
+        -string passwordHash
+        -UserRole role
+        -AccountStatus accountStatus
+        -bool isVerified
+        +canLogin() bool
+        +verifyEmail() void
+        +changeEmail(email: string) void
+    }
+    class Address {
+        +UUID id
+        +UUID userId
+        +string name
+        +int provinceId
+        +int cityId
+        +string fullAddress
+        +Point geog
+        -bool isDefault
+        +validateCoverage(workshopGeog: Point) bool
+        +markDefault() void
+    }
+    class Vehicle {
+        +UUID id
+        +UUID userId
+        +string plateNumber
+        +string brand
+        +string model
+        +int productionYear
+        +VehicleType type
+        +validateIdentity() bool
+    }
+    class Workshop {
+        +UUID id
+        +UUID ownerId
+        +string name
+        -WorkshopStatus status
+        -bool verified
+        -bool marketplaceEnabled
+        +Point geog
+        +activate(reviewerId: UUID) void
+        +enableMarketplace() void
+    }
+    class WorkshopDocument {
+        +UUID id
+        +UUID workshopId
+        +string nib
+        +string npwp
+        -DocumentStatus status
+        -UUID approvedBy
+        -string note
+        +approve(reviewerId: UUID) void
+        +reject(reason: string) void
+    }
+    class WorkshopMembership {
+        +UUID id
+        +UUID userId
+        +UUID workshopId
+        -StaffRole role
+        -bool isActive
+        +hasAccess(workshopId: UUID) bool
+        +changeRole(role: StaffRole) void
+        +deactivate() void
+    }
+    class AuthService {
+        -UserRepository users
+        -VerificationSender sender
+        +registerCustomer(cmd: RegisterCustomerCommand) User
+        +verifyAccount(code: string) void
+        +login(email: string, password: string) Session
+    }
+    class WorkshopService {
+        -WorkshopRepository workshops
+        -AccessPolicy policy
+        +register(cmd: RegisterWorkshopCommand) Workshop
+        +reviewDocuments(documentId: UUID, decision: DocumentDecision) void
+        +assignStaff(cmd: AssignStaffCommand) WorkshopMembership
+    }
+    class AccessPolicy {
+        +requireRole(user: User, role: UserRole) void
+        +requireWorkshopScope(user: User, workshopId: UUID) void
+    }
+    class UserRepository {
+        <<interface>>
+        +findByEmail(email: string) User
+        +save(user: User) void
+    }
+    class WorkshopRepository {
+        <<interface>>
+        +findById(id: UUID) Workshop
+        +save(workshop: Workshop) void
+    }
+    class VerificationSender {
+        <<interface>>
+        +sendCode(email: string, code: string) void
+    }
+    User "1" --> "0..*" Address : alamat
+    User "1" --> "0..*" Vehicle : kendaraan
+    User "1" --> "0..*" Workshop : pemilik
+    Workshop "1" *-- "0..*" WorkshopDocument : dokumen
+    Workshop "1" --> "0..*" WorkshopMembership : staf
+    User "1" --> "0..*" WorkshopMembership : keanggotaan
+    AuthService ..> UserRepository
+    AuthService ..> VerificationSender
+    WorkshopService ..> WorkshopRepository
+    WorkshopService ..> AccessPolicy
+    WorkshopService ..> WorkshopDocument

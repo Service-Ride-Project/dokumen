@@ -1,0 +1,122 @@
+classDiagram
+    direction TB
+    class Review {
+        +UUID id
+        +UUID customerId
+        +UUID workshopId
+        -UUID bookingId
+        -UUID marketplaceOrderId
+        +int rating
+        +string comment
+        -string ownerReply
+        -bool isHidden
+        -string moderationReason
+        +datetime createdAt
+        +datetime repliedAt
+        +editWithinWindow(now: datetime) bool
+        +reply(text: string, at: datetime) void
+        +hide(reason: string) void
+    }
+    class ReviewService {
+        -ReviewRepository reviews
+        -AuditSink audit
+        +create(sourceId: UUID, sourceKind: ReviewSourceKind, rating: int, comment: string) Review
+        +edit(id: UUID, comment: string) void
+        +reply(id: UUID, text: string) void
+        +moderate(id: UUID, reason: string) void
+    }
+    class ComplaintCase {
+        <<planned_persistence>>
+        +UUID id
+        +UUID sourceId
+        +ComplaintSourceKind sourceKind
+        -ComplaintStatus status
+        +string evidenceUrl
+        -string decisionReason
+        +escalate() void
+        +resolve(reason: string) void
+    }
+    class ComplaintService {
+        -ComplaintRepository cases
+        -AuditSink audit
+        -NotificationService notifications
+        +openCase(cmd: ComplaintCommand) ComplaintCase
+        +resolveCase(id: UUID, decision: ComplaintDecision) void
+    }
+    class Notification {
+        <<planned_persistence>>
+        +UUID id
+        +UUID recipientId
+        +string eventType
+        +NotificationStatus status
+        +datetime createdAt
+    }
+    class NotificationService {
+        <<planned_persistence>>
+        -NotificationRepository notifications
+        +publish(recipientId: UUID, event: DomainEvent) void
+        +sendEmailIfAvailable(recipientId: UUID, event: DomainEvent) void
+    }
+    class PlatformAdminService {
+        -MasterDataRepository masterData
+        -AuditSink audit
+        +updateCategory(cmd: CategoryCommand) void
+        +updatePromotion(cmd: PromotionCommand) void
+    }
+    class RevenueReportService {
+        -PaymentRepository payments
+        -AccessPolicy access
+        -AuditSink audit
+        +summarize(workshopId: UUID, period: ReportPeriod) RevenueReport
+        +splitByPaymentMethod(rows: PaymentRowSet) RevenueReport
+    }
+    class RevenueReport {
+        <<document_view>>
+        +UUID workshopId
+        +decimal onlineTotal
+        +decimal cashTotal
+    }
+    class ReviewRepository {
+        <<interface>>
+        +findBySource(sourceId: UUID, sourceKind: ReviewSourceKind) Review
+        +save(review: Review) void
+    }
+    class ComplaintRepository {
+        <<planned_persistence>>
+        +save(caseItem: ComplaintCase) void
+    }
+    class NotificationRepository {
+        <<planned_persistence>>
+        +save(notification: Notification) void
+    }
+    class MasterDataRepository {
+        <<interface>>
+        +saveCategory(category: Category) void
+        +savePromotion(promotion: Promotion) void
+    }
+    class PaymentRepository {
+        <<external_module>>
+        +findForReport(workshopId: UUID, period: ReportPeriod) PaymentRowSet
+    }
+    class AccessPolicy {
+        <<external_module>>
+        +requireRole(user: User, role: UserRole) void
+        +requireWorkshopScope(user: User, workshopId: UUID) void
+    }
+    class AuditSink {
+        <<interface>>
+        +record(actor: UUID, action: string, subject: UUID) void
+    }
+    ReviewService ..> ReviewRepository
+    ReviewService ..> AuditSink
+    ComplaintService ..> ComplaintRepository
+    ComplaintService ..> AuditSink
+    ComplaintService ..> NotificationService
+    NotificationService ..> NotificationRepository
+    NotificationService ..> Notification
+    PlatformAdminService ..> MasterDataRepository
+    PlatformAdminService ..> AuditSink
+    RevenueReportService ..> PaymentRepository
+    RevenueReportService ..> AccessPolicy
+    RevenueReportService ..> AuditSink
+    RevenueReportService ..> RevenueReport

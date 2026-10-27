@@ -1,0 +1,129 @@
+classDiagram
+    direction TB
+    class Category {
+        +UUID id
+        +string name
+    }
+    class CategoryBrand {
+        +UUID id
+        +string name
+        +string logo
+    }
+    class Product {
+        +UUID id
+        +UUID workshopId
+        +UUID categoryId
+        +UUID categoryBrandId
+        +string sku
+        +string name
+        +decimal price
+        -bool isActive
+        +publish() void
+        +deactivate() void
+    }
+    class ProductStock {
+        +UUID id
+        +UUID productId
+        +string serialNumber
+        -StockStatus status
+        -UUID bookingProductId
+        -UUID orderDetailId
+        -datetime reservedAt
+        +holdForService(itemId: UUID) void
+        +holdForOrder(itemId: UUID) void
+        +release() void
+        +consume(status: StockStatus) void
+    }
+    class MarketplaceOrder {
+        +UUID id
+        +UUID customerId
+        +string transactionCode
+        -OrderStatus status
+        +decimal subtotal
+        +decimal shippingCost
+        +decimal totalAmount
+        +json shippingAddress
+        +datetime paidAt
+        +datetime receivedAt
+        +markPaid(at: datetime) void
+        +cancel() void
+    }
+    class MarketplaceOrderDetail {
+        +UUID id
+        +UUID orderId
+        +UUID workshopId
+        +UUID productId
+        +int quantity
+        +decimal price
+        -ItemStatus status
+        -ReturnStatus returnStatus
+        +string courier
+        +string trackingNumber
+        +string returnEvidenceUrl
+        +datetime returnRequestedAt
+        +markShipped(courier: string, trackingNumber: string) void
+        +requestReturn(evidenceUrl: string, at: datetime) void
+    }
+    class InventoryService {
+        -StockRepository stocks
+        +availableCount(productId: UUID) int
+        +checkAvailable(workshopId: UUID, items: StockRequest) Availability
+        +holdForService(bookingId: UUID, items: StockRequest) void
+        +releaseServiceHold(bookingId: UUID) void
+        +holdUnits(productId: UUID, qty: int, targetId: UUID, targetKind: StockTargetKind) void
+        +releaseUnits(targetId: UUID, targetKind: StockTargetKind) void
+        +consumeUnits(targetId: UUID, targetKind: StockTargetKind) void
+    }
+    class MarketplaceService {
+        -OrderRepository orders
+        -InventoryService inventory
+        -PaymentService payments
+        +checkout(cmd: CheckoutCommand) MarketplaceOrder
+        +fulfill(detailId: UUID, courier: string, tracking: string) void
+        +cancel(orderId: UUID) void
+        +requestReturn(detailId: UUID, evidenceUrl: string) void
+        +decideReturn(detailId: UUID, decision: ReturnStatus, reason: string) void
+    }
+    class CatalogService {
+        -ProductRepository products
+        +createProduct(cmd: ProductCommand) Product
+        +updateProduct(id: UUID, cmd: ProductCommand) Product
+        +deactivateProduct(id: UUID) void
+    }
+    class OfflineSaleService {
+        -InventoryService inventory
+        -PaymentService payments
+        +sellCash(workshopId: UUID, items: StockRequest, amount: decimal) void
+    }
+    class ProductRepository {
+        <<interface>>
+        +findBySku(workshopId: UUID, sku: string) Product
+        +save(product: Product) void
+    }
+    class StockRepository {
+        <<interface>>
+        +lockAvailable(productId: UUID, qty: int) ProductStock
+        +saveAll(units: ProductStockList) void
+    }
+    class OrderRepository {
+        <<interface>>
+        +findForUpdate(id: UUID) MarketplaceOrder
+        +save(order: MarketplaceOrder) void
+    }
+    class PaymentService {
+        <<external_module>>
+        +startDummyQris(sourceId: UUID, sourceKind: PaymentSourceKind, amount: decimal) Payment
+        +refund(originalPaymentId: UUID, amount: decimal) Payment
+    }
+    Category "1" --> "0..*" Product : kategori
+    CategoryBrand "0..1" --> "0..*" Product : merek
+    Product "1" *-- "0..*" ProductStock : unit
+    MarketplaceOrder "1" *-- "1..*" MarketplaceOrderDetail : rincian
+    Product "1" --> "0..*" MarketplaceOrderDetail : produk
+    InventoryService ..> StockRepository
+    MarketplaceService ..> OrderRepository
+    MarketplaceService ..> InventoryService
+    MarketplaceService ..> PaymentService
+    CatalogService ..> ProductRepository
+    OfflineSaleService ..> InventoryService
+    OfflineSaleService ..> PaymentService

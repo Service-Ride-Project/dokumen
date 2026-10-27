@@ -1,0 +1,108 @@
+classDiagram
+    direction TB
+    class Booking {
+        +UUID id
+        +UUID customerId
+        +UUID workshopId
+        +UUID vehicleId
+        +UUID addressId
+        +string bookingCode
+        +BookingType type
+        -BookingStatus status
+        +datetime scheduledAt
+        +datetime estimatedFinishAt
+        -ApprovalStatus approvalStatus
+        -ApprovalMethod approvalMethod
+        -string approvalEvidence
+        -datetime approvedAt
+        -decimal estimatedTotal
+        +confirm() void
+        +cancel(reason: string) void
+        +approveEstimate(method: ApprovalMethod, evidence: string) void
+        +rejectEstimate(reason: string) void
+    }
+    class BookingServiceItem {
+        +UUID id
+        +UUID bookingId
+        +UUID mechanicMembershipId
+        +string diagnosis
+        +json inspectionPhotos
+        +json progressHistory
+        +decimal laborPrice
+        -ServiceStatus status
+        +recordInspection(photos: json, diagnosis: string) void
+        +complete(at: datetime) void
+    }
+    class BookingProduct {
+        +UUID id
+        +UUID bookingId
+        +UUID productId
+        +int quantity
+        +decimal unitPrice
+        +subtotal() decimal
+    }
+    class EstimateDocument {
+        <<document_view>>
+        +UUID bookingId
+        +decimal total
+        +datetime finishEstimate
+        +string documentUrl
+        +render() bytes
+    }
+    class BookingService {
+        -BookingRepository bookings
+        -SlotPolicy slots
+        -AccessPolicy access
+        +createOnsite(cmd: CreateBookingCommand) Booking
+        +createPickup(cmd: CreateBookingCommand) Booking
+        +confirm(id: UUID) void
+        +cancel(id: UUID, reason: string) void
+    }
+    class EstimateService {
+        -BookingRepository bookings
+        -InventoryService inventory
+        -PaymentService payments
+        +prepare(bookingId: UUID, inspection: InspectionInput) EstimateDocument
+        +approve(id: UUID, decision: ApprovalStatus, evidence: string) void
+        +startWork(id: UUID) void
+    }
+    class SlotPolicy {
+        +checkCapacity(workshopId: UUID, time: datetime) bool
+        +reserveSlot(bookingId: UUID, time: datetime) void
+        +releaseSlot(bookingId: UUID) void
+    }
+    class CoveragePolicy {
+        +checkCoverage(workshopGeog: Point, addressGeog: Point) bool
+        +calculatePickupFee(distance: decimal) decimal
+    }
+    class BookingRepository {
+        <<interface>>
+        +findForUpdate(id: UUID) Booking
+        +save(booking: Booking) void
+        +findSchedule(workshopId: UUID, time: datetime) Booking
+    }
+    class InventoryService {
+        <<external_module>>
+        +checkAvailable(workshopId: UUID, items: StockRequest) Availability
+        +holdForService(bookingId: UUID, items: StockRequest) void
+        +releaseServiceHold(bookingId: UUID) void
+    }
+    class PaymentService {
+        <<external_module>>
+        +isPaid(bookingId: UUID) bool
+    }
+    class AccessPolicy {
+        <<external_module>>
+        +requireRole(user: User, role: UserRole) void
+        +requireWorkshopScope(user: User, workshopId: UUID) void
+    }
+    Booking "1" *-- "0..*" BookingServiceItem : pekerjaan
+    Booking "1" *-- "0..*" BookingProduct : komponen
+    Booking "1" ..> "0..1" EstimateDocument : tampilan
+    BookingService ..> BookingRepository
+    BookingService ..> SlotPolicy
+    BookingService ..> CoveragePolicy
+    BookingService ..> AccessPolicy
+    EstimateService ..> BookingRepository
+    EstimateService ..> InventoryService
+    EstimateService ..> PaymentService

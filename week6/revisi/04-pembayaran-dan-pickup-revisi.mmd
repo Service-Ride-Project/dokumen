@@ -1,0 +1,101 @@
+classDiagram
+    direction TB
+    class Payment {
+        +UUID id
+        +UUID userId
+        -UUID bookingId
+        -UUID marketplaceOrderId
+        -UUID originalPaymentId
+        +string paymentCode
+        +PaymentType type
+        +PaymentMethod method
+        -PaymentStatus status
+        -decimal amount
+        -string referenceNumber
+        -datetime paidAt
+        +validateSource() bool
+        +confirm(reference: string, at: datetime) void
+        +refund(amount: decimal) void
+    }
+    class BookingPickup {
+        +UUID id
+        +UUID bookingId
+        +UUID staffMembershipId
+        +PickupType type
+        -PickupStatus status
+        +decimal pickupFee
+        +datetime scheduledAt
+        +datetime departedAt
+        +datetime completedAt
+        +string handoverEvidence
+        +depart(at: datetime) void
+        +handOver(evidence: string, at: datetime) void
+    }
+    class PickupHistory {
+        +UUID id
+        +UUID pickupId
+        +Point geog
+        +PickupHistoryStatus status
+        +datetime recordedAt
+        +string note
+    }
+    class PaymentService {
+        -PaymentRepository payments
+        -DummyQrisAdapter qris
+        +startDummyQris(sourceId: UUID, sourceKind: PaymentSourceKind, amount: decimal) Payment
+        +recordCash(sourceId: UUID, sourceKind: PaymentSourceKind, amount: decimal) Payment
+        +isPaid(bookingId: UUID) bool
+        +confirm(paymentId: UUID, reference: string) void
+        +refund(originalPaymentId: UUID, amount: decimal) Payment
+    }
+    class PickupService {
+        -PickupRepository pickups
+        -LocationStream stream
+        +assign(bookingId: UUID, driverMembershipId: UUID, type: PickupType) BookingPickup
+        +updateLocation(taskId: UUID, point: Point) void
+        +completeHandover(taskId: UUID, evidence: string) void
+    }
+    class InvoiceService {
+        -PaymentRepository payments
+        -BookingRepository bookings
+        -DocumentRenderer renderer
+        +issueFinalInvoice(bookingId: UUID) string
+    }
+    class DocumentRenderer {
+        <<interface>>
+        +renderFinalInvoice(bookingId: UUID) bytes
+    }
+    class DummyQrisAdapter {
+        <<interface>>
+        +createPayment(code: string, amount: decimal) string
+        +checkPayment(code: string) bool
+    }
+    class PaymentRepository {
+        <<interface>>
+        +findForUpdate(id: UUID) Payment
+        +save(payment: Payment) void
+    }
+    class PickupRepository {
+        <<interface>>
+        +findForUpdate(id: UUID) BookingPickup
+        +save(task: BookingPickup) void
+        +appendHistory(history: PickupHistory) void
+    }
+    class BookingRepository {
+        <<external_module>>
+        +findForUpdate(id: UUID) Booking
+        +save(booking: Booking) void
+    }
+    class LocationStream {
+        <<interface>>
+        +publish(bookingId: UUID, point: Point) void
+    }
+    Payment "1" <-- "0..*" Payment : refundDari
+    BookingPickup "1" *-- "0..*" PickupHistory : riwayat
+    PaymentService ..> PaymentRepository
+    PaymentService ..> DummyQrisAdapter
+    PickupService ..> PickupRepository
+    PickupService ..> LocationStream
+    InvoiceService ..> PaymentRepository
+    InvoiceService ..> BookingRepository
+    InvoiceService ..> DocumentRenderer
