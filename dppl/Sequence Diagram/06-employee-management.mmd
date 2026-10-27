@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor WorkshopOwner as Workshop Owner
+    participant UI as Browser UI
+    participant Service as WorkshopService
+    participant Records as WorkshopRepository
+    participant Dep as AccessPolicy
+    WorkshopOwner->>UI: Select a workshop, branch, and employee
+    UI->>Service: Submit employee and branch access management request
+    Service->>Records: Check owner scope and branch assignment
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate kepemilikan bengkel dan role staf
+    alt Valid
+        Service->>Dep: requireWorkshopScope(owner, workshop)
+        Dep-->>Service: Result
+        Service->>Records: Save branch-specific employee access
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display updated employee permissions
+        UI-->>WorkshopOwner: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject access outside owned branches
+        UI-->>WorkshopOwner: Display the reason and required action
+    end

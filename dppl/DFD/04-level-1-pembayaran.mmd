@@ -1,0 +1,32 @@
+flowchart LR
+    C[Customer]
+    A[Operations Administrator]
+    S[Super Admin]
+    P41([4.1 Buat tagihan])
+    P42([4.2 Proses Dummy QRIS atau kas])
+    P43([4.3 Konfirmasi pembayaran])
+    P44([4.4 Pengembalian dana])
+    P45([4.5 Terbitkan invoice final])
+    DB@{ shape: datastore, label: "D2 Booking dan estimasi" }
+    DO@{ shape: datastore, label: "D3 Order" }
+    DP@{ shape: datastore, label: "D4 Payment" }
+    DB -->|biaya pickup atau servis| P41
+    DO -->|total marketplace| P41
+    P41 -->|tagihan dan kode pembayaran| C
+    C -->|hasil Dummy QRIS| P42
+    A -->|penerimaan tunai| P42
+    P42 -->|payment pending atau paid| DP
+    DP -->|catatan pembayaran| P43
+    S -->|keputusan pemeriksaan manual| P43
+    P43 -->|status valid| DB
+    P43 -->|status valid| DO
+    P43 -->|konfirmasi| C
+    DO -->|retur disetujui| P44
+    DB -->|pembatalan yang berhak refund| P44
+    P44 -->|payment refund terkait asal| DP
+    P44 -->|status refund| C
+    A -->|permintaan invoice| P45
+    DB -->|servis selesai dan rincian disetujui| P45
+    DP -->|pembayaran tercatat| P45
+    P45 -->|invoice_url| DB
+    P45 -->|invoice final| C

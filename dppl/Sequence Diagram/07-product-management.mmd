@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    participant UI as Browser UI
+    participant Service as CatalogService
+    participant Records as ProductRepository
+    participant Dep as AccessPolicy
+    WarehouseAdmin->>UI: Create, update, or deactivate a part listing
+    UI->>Service: Submit spare part catalog management request
+    Service->>Records: Validate product details and workshop scope
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate SKU unik per bengkel dan harga tidak negatif
+    alt Valid
+        Service->>Dep: requireWorkshopScope(staff, workshop)
+        Dep-->>Service: Result
+        Service->>Records: Save the catalog change
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Refresh the workshop catalog
+        UI-->>WarehouseAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return product validation errors
+        UI-->>WarehouseAdmin: Display the reason and required action
+    end

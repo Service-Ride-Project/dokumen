@@ -1,0 +1,37 @@
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    participant UI as Browser UI
+    participant M as MarketplaceService
+    participant I as InventoryService
+    participant O as OrderRepository
+    participant P as PaymentService
+    C->>UI: Pilih produk, jumlah, dan alamat pengiriman
+    UI->>M: checkout(customerId, cart, address)
+    M->>O: Baca listing, bengkel, dan harga terbaru
+    O-->>M: Data listing aktif
+    M->>I: holdUnits(workshopId, productId, qty)
+    alt Stok tersedia dan bengkel aktif
+        I-->>M: Unit held dalam transaksi
+        M->>O: Simpan order pending_payment dan rincian
+        O-->>M: orderId dan total
+        M->>P: startDummyQris(orderId, total)
+        P-->>M: Kode pembayaran
+        M-->>UI: Kode QRIS dan batas pembayaran
+        C->>UI: Konfirmasi pembayaran
+        UI->>P: checkPayment(orderId)
+        alt Pembayaran berhasil
+            P-->>M: Payment paid
+            M->>O: Ubah order menjadi processing
+            M-->>UI: Pesanan berhasil dibuat
+        else Gagal atau kedaluwarsa
+            P-->>M: Payment failed
+            M->>I: releaseUnits(orderId)
+            M->>O: Ubah order menjadi cancelled
+            M-->>UI: Pembayaran gagal dan stok dilepas
+        end
+    else Stok atau listing tidak valid
+        I-->>M: Gagal alokasi
+        M-->>UI: Tolak checkout beserta alasan
+    end
+    UI-->>C: Tampilkan status akhir

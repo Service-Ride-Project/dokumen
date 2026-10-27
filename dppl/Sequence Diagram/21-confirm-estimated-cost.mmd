@@ -1,0 +1,40 @@
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    actor A as Operations Administrator
+    participant UI as Browser UI
+    participant E as EstimateService
+    participant R as BookingRepository
+    participant I as InventoryService
+    participant P as PaymentService
+    C->>UI: Setujui atau tolak estimasi
+    opt Persetujuan via WhatsApp atau telepon
+        A->>UI: Masukkan kanal dan bukti persetujuan
+    end
+    UI->>E: approve(bookingId, decision, evidence)
+    E->>R: Kunci booking dan ambil estimasi terkini
+    R-->>E: Status, versi, rincian, kontak
+    E->>E: Validasi otoritas, bukti, dan versi
+    alt Persetujuan valid
+        E->>I: Recheck and holdForService(workshopId, items)
+        alt Stok cukup
+            I-->>E: Unit held dan transaksi commit
+            E->>R: Simpan approval_status, method, evidence, approved_at
+            E->>P: isPaid(bookingId)
+            alt Sudah dibayar
+                P-->>E: True
+                E->>R: Ubah status menjadi in_progress
+                E-->>UI: Pekerjaan boleh dimulai
+            else Belum dibayar
+                P-->>E: False
+                E-->>UI: Tunggu pembayaran sebelum pekerjaan
+            end
+        else Stok berubah atau kurang
+            I-->>E: Alokasi gagal, tanpa perubahan unit
+            E-->>UI: Estimasi perlu revisi
+        end
+    else Ditolak atau bukti tidak valid
+        E->>R: Simpan keputusan penolakan bila sah
+        E-->>UI: Pekerjaan tetap terblokir
+    end
+    UI-->>C: Tampilkan keputusan

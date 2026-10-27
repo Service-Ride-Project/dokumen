@@ -1,0 +1,32 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor Customer as Customer
+    actor WorkshopOwner as Workshop Owner
+    participant UI as Browser UI
+    participant Service as ReviewService
+    participant Records as ReviewRepository
+    participant Dep as AccessPolicy
+    Customer->>UI: Write or edit a review for a completed transaction
+    UI->>Service: Submit completed transaction review request
+    Service->>Records: Check transaction completion and the 24-hour edit limit
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate transaksi completed dan edit maksimal 24 jam
+    alt Valid
+        Service->>Dep: requireTransactionOwner(customer, source)
+        Dep-->>Service: Result
+        Service->>Records: Save the review with customer identity hidden from Owner
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Allow Workshop Owner to post a public reply
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject edits after the review window
+        UI-->>Customer: Display the reason and required action
+    end
+    opt Workshop Owner participates in this use case
+        WorkshopOwner->>UI: Post a public reply to the review
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>WorkshopOwner: Return the recorded outcome
+    end

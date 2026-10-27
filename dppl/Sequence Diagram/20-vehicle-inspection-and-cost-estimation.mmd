@@ -1,0 +1,32 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor Mechanic as Mechanic
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Browser UI
+    participant Service as EstimateService
+    participant Records as BookingRepository
+    participant Dep as InventoryService
+    Mechanic->>UI: Record diagnosis, photos, parts, and labor needs
+    UI->>Service: Submit vehicle inspection and cost estimation request
+    Service->>Records: Check stock at the same workshop and exclude pending units
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate mechanic ditugaskan dan foto tersedia
+    alt Valid
+        Service->>Dep: checkAvailableWithoutHold(workshop, items)
+        Dep-->>Service: Result
+        Service->>Records: Save an estimate version without reserving stock
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Send the estimate to Customer for approval
+        UI-->>Mechanic: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Mark unavailable parts clearly in the estimate
+        UI-->>Mechanic: Display the reason and required action
+    end
+    opt Workshop Operations Administrator participates in this use case
+        OperationsAdmin->>UI: Prepare the estimate from inspection and stock results
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>OperationsAdmin: Return the recorded outcome
+    end

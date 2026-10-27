@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    participant UI as Browser UI
+    participant Service as MarketplaceService
+    participant Records as OrderRepository
+    participant Dep as InventoryService
+    WarehouseAdmin->>UI: Open a paid order and prepare its parcel
+    UI->>Service: Submit marketplace order fulfillment request
+    Service->>Records: Check order status and pending stock units
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate order lunas dan resi tersedia
+    alt Valid
+        Service->>Dep: consumeUnits(orderDetail)
+        Dep-->>Service: Result
+        Service->>Records: Record courier and tracking number
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Update fulfillment status
+        UI-->>WarehouseAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject fulfillment after cancellation
+        UI-->>WarehouseAdmin: Display the reason and required action
+    end

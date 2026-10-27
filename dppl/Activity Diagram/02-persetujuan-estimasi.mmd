@@ -1,0 +1,27 @@
+swimlane-beta TB
+    subgraph Pelanggan["Customer atau Operations Administrator"]
+        mulai([Mulai])
+        keputusan[Setujui atau tolak estimasi]
+        bukti[Catat kanal dan bukti persetujuan]
+        koreksi[Terima daftar komponen yang kurang]
+    end
+    subgraph Sistem["EstimateService"]
+        validasi[Validasi role, status booking, dan estimasi terkini]
+        setuju{Disetujui?}
+        tolak[Catat penolakan dan hentikan alur pekerjaan]
+        ulang[Periksa ulang stok bengkel tanpa unit held]
+        tersedia{Stok cukup?}
+        tahan[Alokasikan unit secara atomik]
+        kunci[Catat approval dan kunci rincian estimasi]
+        bayar{Pembayaran servis tercatat?}
+        tunggu[Tunggu pembayaran]
+        kerja[Izinkan pekerjaan dimulai]
+        selesai((Selesai))
+    end
+    mulai --> keputusan --> bukti --> validasi --> setuju
+    setuju -->|Tidak| tolak --> selesai
+    setuju -->|Ya| ulang --> tersedia
+    tersedia -->|Tidak| koreksi --> selesai
+    tersedia -->|Ya| tahan --> kunci --> bayar
+    bayar -->|Tidak| tunggu --> bayar
+    bayar -->|Ya| kerja --> selesai

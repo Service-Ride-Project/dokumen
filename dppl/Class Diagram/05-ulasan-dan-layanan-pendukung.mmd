@@ -1,0 +1,85 @@
+classDiagram
+    direction LR
+    class Review {
+        +UUID id
+        +UUID customerId
+        +UUID workshopId
+        +UUID bookingId
+        +UUID marketplaceOrderId
+        +int rating
+        +string comment
+        +string ownerReply
+        +bool isHidden
+        +editWithinWindow(now) bool
+        +reply(text) void
+    }
+    class ReviewService {
+        -ReviewRepository reviews
+        +create(sourceId,rating,comment) Review
+        +edit(id,comment) void
+        +reply(id,text) void
+        +moderate(id,reason) void
+    }
+    class ComplaintCase {
+        <<planned_persistence>>
+        +UUID id
+        +UUID sourceId
+        +string status
+        +string evidenceUrl
+        +string decisionReason
+        +escalate() void
+        +resolve(reason) void
+    }
+    class ComplaintService {
+        -ComplaintRepository cases
+        -AuditSink audit
+        +openCase(cmd) ComplaintCase
+        +resolveCase(id,decision) void
+    }
+    class NotificationService {
+        <<planned_persistence>>
+        -NotificationRepository notifications
+        +publish(recipientId,event) void
+        +sendEmailIfAvailable(recipientId,event) void
+    }
+    class PlatformAdminService {
+        -MasterDataRepository masterData
+        -AuditSink audit
+        +updateCategory(cmd) void
+        +updatePromotion(cmd) void
+    }
+    class RevenueReportService {
+        +summarize(workshopId,period) Report
+        +splitByPaymentMethod(rows) Report
+    }
+    class ReviewRepository {
+        <<interface>>
+        +findBySource(sourceId) Review
+        +save(review) void
+    }
+    class ComplaintRepository {
+        <<planned_persistence>>
+        +save(case) void
+    }
+    class NotificationRepository {
+        <<planned_persistence>>
+        +save(notification) void
+    }
+    class MasterDataRepository {
+        <<interface>>
+        +saveCategory(category) void
+        +savePromotion(promotion) void
+    }
+    class AuditSink {
+        <<interface>>
+        +record(actor,action,subject) void
+    }
+    ReviewService ..> ReviewRepository
+    ComplaintService ..> AuditSink
+    ComplaintService ..> ComplaintRepository
+    ComplaintService ..> NotificationService
+    ReviewService ..> AuditSink
+    RevenueReportService ..> AuditSink : catat akses
+    NotificationService ..> NotificationRepository
+    PlatformAdminService ..> MasterDataRepository
+    PlatformAdminService ..> AuditSink

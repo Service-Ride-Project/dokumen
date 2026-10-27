@@ -1,0 +1,22 @@
+swimlane-beta TB
+    subgraph Peminta["Servis atau marketplace"]
+        mulai([Mulai])
+        minta[Ajukan produk dan jumlah]
+        gagal[Terima alasan stok tidak cukup]
+        lanjut[Terima alokasi unit]
+    end
+    subgraph Inventori["InventoryService"]
+        cakupan[Pastikan produk milik bengkel terkait]
+        kunci[Kunci unit available dalam transaksi]
+        cukup{Jumlah cukup?}
+        tahan[Ubah unit menjadi held dan isi satu target alokasi]
+        batal[Rollback transaksi]
+        simpan[Commit transaksi]
+    end
+    subgraph BasisData["PostgreSQL"]
+        baca[SELECT unit available FOR UPDATE]
+        cek[Periksa constraint satu sumber alokasi]
+    end
+    mulai --> minta --> cakupan --> kunci --> baca --> cukup
+    cukup -->|Tidak| batal --> gagal
+    cukup -->|Ya| tahan --> cek --> simpan --> lanjut

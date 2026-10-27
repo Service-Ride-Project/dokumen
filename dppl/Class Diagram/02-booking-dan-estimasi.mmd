@@ -1,0 +1,98 @@
+classDiagram
+    direction LR
+    class Booking {
+        +UUID id
+        +UUID customerId
+        +UUID workshopId
+        +UUID vehicleId
+        +BookingType type
+        +BookingStatus status
+        +datetime scheduledAt
+        +ApprovalStatus approvalStatus
+        +decimal estimatedTotal
+        +confirm() void
+        +cancel(reason) void
+        +approveEstimate(evidence) void
+    }
+    class BookingServiceItem {
+        +UUID id
+        +UUID bookingId
+        +UUID mechanicId
+        +string diagnosis
+        +decimal laborPrice
+        +ServiceStatus status
+        +recordInspection(photos) void
+        +complete() void
+    }
+    class BookingProduct {
+        +UUID id
+        +UUID bookingId
+        +UUID productId
+        +int quantity
+        +decimal unitPrice
+        +subtotal() decimal
+    }
+    class EstimateDocument {
+        <<document_view>>
+        +UUID bookingId
+        +decimal total
+        +datetime finishEstimate
+        +string documentUrl
+        +render() bytes
+    }
+    class BookingService {
+        -BookingRepository bookings
+        -SlotPolicy slots
+        -AccessPolicy access
+        +createOnsite(cmd) Booking
+        +createPickup(cmd) Booking
+        +confirm(id) void
+        +cancel(id,reason) void
+    }
+    class EstimateService {
+        -BookingRepository bookings
+        -InventoryService inventory
+        -PaymentService payments
+        +prepare(inspection) EstimateDocument
+        +approve(id,evidence) void
+        +startWork(id) void
+    }
+    class SlotPolicy {
+        +checkCapacity(workshopId,time) bool
+        +reserveSlot(bookingId,time) void
+        +releaseSlot(bookingId) void
+    }
+    class CoveragePolicy {
+        +checkCoverage(workshopGeog,addressGeog) bool
+        +calculatePickupFee(distance) decimal
+    }
+    class BookingRepository {
+        <<interface>>
+        +findForUpdate(id) Booking
+        +save(booking) void
+        +findSchedule(workshopId,time) Booking
+    }
+    class InventoryService {
+        <<external_module>>
+        +checkAvailable(workshopId,items) Availability
+        +holdForService(bookingId,items) void
+        +releaseServiceHold(bookingId) void
+    }
+    class PaymentService {
+        <<external_module>>
+        +isPaid(bookingId) bool
+    }
+    class AccessPolicy {
+        <<external_module>>
+        +requireWorkshopScope(user,workshopId) void
+    }
+    Booking "1" *-- "0..*" BookingServiceItem : pekerjaan
+    Booking "1" *-- "0..*" BookingProduct : komponen
+    Booking "1" ..> "0..1" EstimateDocument : menghasilkan
+    BookingService ..> BookingRepository
+    BookingService ..> SlotPolicy
+    BookingService ..> CoveragePolicy
+    BookingService ..> AccessPolicy
+    EstimateService ..> BookingRepository
+    EstimateService ..> InventoryService
+    EstimateService ..> PaymentService

@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor SuperAdmin as Super Admin
+    participant UI as Browser UI
+    participant Service as PlatformAdminService
+    participant Records as MasterDataRepository
+    participant Dep as AuditSink
+    SuperAdmin->>UI: Select platform data or a promotion and submit changes
+    UI->>Service: Submit platform data and promotion management request
+    Service->>Records: Validate completeness, uniqueness, and applicable rules
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate role Super Admin dan data induk valid
+    alt Valid
+        Service->>Dep: recordMasterDataChange(admin, change)
+        Dep-->>Service: Result
+        Service->>Records: Save the approved change and audit record
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Apply the platform data or promotion change
+        UI-->>SuperAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return invalid fields for correction
+        UI-->>SuperAdmin: Display the reason and required action
+    end

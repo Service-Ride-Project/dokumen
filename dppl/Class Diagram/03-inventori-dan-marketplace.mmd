@@ -1,0 +1,110 @@
+classDiagram
+    direction LR
+    class Category {
+        +UUID id
+        +string name
+    }
+    class CategoryBrand {
+        +UUID id
+        +string name
+    }
+    class Product {
+        +UUID id
+        +UUID workshopId
+        +UUID categoryId
+        +string sku
+        +string name
+        +decimal price
+        +bool isActive
+        +publish() void
+    }
+    class ProductStock {
+        +UUID id
+        +UUID productId
+        +StockStatus status
+        +UUID bookingProductId
+        +UUID orderDetailId
+        +holdForService(itemId) void
+        +holdForOrder(itemId) void
+        +release() void
+        +consume() void
+    }
+    class MarketplaceOrder {
+        +UUID id
+        +UUID customerId
+        +OrderStatus status
+        +decimal totalAmount
+        +json shippingAddress
+        +markPaid() void
+        +cancel() void
+    }
+    class MarketplaceOrderDetail {
+        +UUID id
+        +UUID orderId
+        +UUID productId
+        +int quantity
+        +decimal price
+        +ItemStatus status
+        +string courier
+        +string trackingNumber
+        +markShipped() void
+    }
+    class InventoryService {
+        -StockRepository stocks
+        +availableCount(productId) int
+        +holdUnits(productId,qty,targetId) void
+        +releaseUnits(targetId) void
+        +consumeUnits(targetId) void
+    }
+    class MarketplaceService {
+        -OrderRepository orders
+        -InventoryService inventory
+        -PaymentService payments
+        +checkout(cmd) MarketplaceOrder
+        +fulfill(detailId,tracking) void
+        +cancel(orderId) void
+        +requestReturn(detailId,evidence) void
+    }
+    class CatalogService {
+        -ProductRepository products
+        +createProduct(cmd) Product
+        +updateProduct(id,cmd) Product
+        +deactivateProduct(id) void
+    }
+    class OfflineSaleService {
+        -InventoryService inventory
+        -PaymentService payments
+        +sellCash(workshopId,items,amount) void
+    }
+    class ProductRepository {
+        <<interface>>
+        +findBySku(workshopId,sku) Product
+        +save(product) void
+    }
+    class StockRepository {
+        <<interface>>
+        +lockAvailable(productId,qty) ProductStock
+        +saveAll(units) void
+    }
+    class OrderRepository {
+        <<interface>>
+        +findForUpdate(id) MarketplaceOrder
+        +save(order) void
+    }
+    class PaymentService {
+        <<external_module>>
+        +startDummyQris(sourceId,amount) Payment
+        +refund(paymentId) Payment
+    }
+    Category "1" --> "0..*" Product : mengelompokkan
+    CategoryBrand "0..1" --> "0..*" Product : merek
+    Product "1" *-- "0..*" ProductStock : unit fisik
+    MarketplaceOrder "1" *-- "1..*" MarketplaceOrderDetail : rincian
+    Product "1" --> "0..*" MarketplaceOrderDetail : dijual
+    InventoryService ..> StockRepository
+    MarketplaceService ..> OrderRepository
+    MarketplaceService ..> InventoryService
+    MarketplaceService ..> PaymentService
+    CatalogService ..> ProductRepository
+    OfflineSaleService ..> InventoryService
+    OfflineSaleService ..> PaymentService

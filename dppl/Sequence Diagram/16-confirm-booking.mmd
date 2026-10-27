@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Browser UI
+    participant Service as BookingService
+    participant Records as BookingRepository
+    participant Dep as SlotPolicy
+    OperationsAdmin->>UI: Review the booking request and workshop capacity
+    UI->>Service: Submit booking confirmation request
+    Service->>Records: Check the selected slot and branch capacity
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate booking pending dan kapasitas cukup
+    alt Valid
+        Service->>Dep: reserveSlot(workshop, time)
+        Dep-->>Service: Result
+        Service->>Records: Confirm or reject the booking
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Reserve the slot and notify Customer
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Record a reason when the booking is rejected
+        UI-->>OperationsAdmin: Display the reason and required action
+    end

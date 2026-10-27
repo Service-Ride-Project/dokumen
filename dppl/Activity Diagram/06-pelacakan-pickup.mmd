@@ -1,0 +1,21 @@
+swimlane-beta TB
+    subgraph Driver["Pickup Service"]
+        mulai([Mulai perjalanan])
+        kirim[Kirim lokasi dan status]
+        serah[Catat bukti serah terima]
+    end
+    subgraph Sistem["PickupService"]
+        validasi[Pastikan driver bertugas dan perjalanan aktif]
+        simpan[Simpan riwayat lokasi PostGIS]
+        siar[Publikasikan pembaruan via SSE]
+        jeda{Pembaruan terhenti?}
+        peringatan[Tandai lokasi terakhir dan beri peringatan]
+        selesai[Ubah tugas menjadi completed]
+        akhir((Selesai))
+    end
+    subgraph Customer["Customer"]
+        lihat[Lihat lokasi terakhir dan status]
+    end
+    mulai --> kirim --> validasi --> simpan --> siar --> lihat --> jeda
+    jeda -->|Ya| peringatan --> lihat
+    jeda -->|Tidak| serah --> selesai --> akhir

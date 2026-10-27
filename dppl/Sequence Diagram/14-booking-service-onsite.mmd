@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor Customer as Customer
+    participant UI as Browser UI
+    participant Service as BookingService
+    participant Records as BookingRepository
+    participant Dep as SlotPolicy
+    Customer->>UI: Choose a vehicle, workshop, service, and time slot
+    UI->>Service: Submit onsite service booking request
+    Service->>Records: Check workshop service and slot availability
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate kendaraan milik customer dan slot masih ada
+    alt Valid
+        Service->>Dep: reserveSlot(workshop, time)
+        Dep-->>Service: Result
+        Service->>Records: Save an onsite booking request
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display the booking status
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return unavailable services or time slots
+        UI-->>Customer: Display the reason and required action
+    end

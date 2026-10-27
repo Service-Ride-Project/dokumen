@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    participant UI as Browser UI
+    participant Service as InventoryService
+    participant Records as StockRepository
+    participant Dep as AccessPolicy
+    WarehouseAdmin->>UI: Record a stock receipt or correction
+    UI->>Service: Submit workshop inventory management request
+    Service->>Records: Load stock for the selected workshop
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate status unit dan cakupan bengkel
+    alt Valid
+        Service->>Dep: requireWorkshopScope(staff, workshop)
+        Dep-->>Service: Result
+        Service->>Records: Update physical unit records and statuses
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display available and pending units
+        UI-->>WarehouseAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject a correction outside the assigned workshop
+        UI-->>WarehouseAdmin: Display the reason and required action
+    end

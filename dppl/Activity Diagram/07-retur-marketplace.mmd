@@ -1,0 +1,29 @@
+swimlane-beta TB
+    subgraph Customer["Customer"]
+        mulai([Mulai])
+        ajukan[Ajukan retur dengan bukti]
+        hasil[Terima keputusan]
+    end
+    subgraph Marketplace["MarketplaceService"]
+        cek[Periksa status diterima dan tenggat satu hari]
+        sah{Permintaan valid?}
+        catat[Simpan requested beserta bukti]
+        putus{Retur disetujui?}
+        tolak[Catat rejected dengan alasan]
+        terima[Catat approved]
+    end
+    subgraph Gudang["Warehouse Administrator"]
+        tinjau[Tinjau bukti dan kondisi item]
+    end
+    subgraph Pembayaran["PaymentService"]
+        refund[Proses refund terkait pembayaran asal]
+        berhasil{Refund berhasil?}
+        tindak[Tandai untuk tindak lanjut]
+    end
+    mulai --> ajukan --> cek --> sah
+    sah -->|Tidak| tolak --> hasil
+    sah -->|Ya| catat --> tinjau --> putus
+    putus -->|Tidak| tolak --> hasil
+    putus -->|Ya| terima --> refund --> berhasil
+    berhasil -->|Ya| hasil
+    berhasil -->|Tidak| tindak --> hasil

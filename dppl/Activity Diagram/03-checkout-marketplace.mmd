@@ -1,0 +1,25 @@
+swimlane-beta TB
+    subgraph Customer["Customer"]
+        mulai([Mulai])
+        pilih[Pilih produk, jumlah, dan alamat]
+        hasil[Terima status transaksi]
+    end
+    subgraph Marketplace["MarketplaceService"]
+        validasi[Validasi bengkel aktif dan marketplace terbuka]
+        stok[Alokasikan unit stok held]
+        cukup{Stok cukup?}
+        buat[Buat transaksi pending_payment]
+        bayar[Mulai Dummy QRIS]
+        sukses{Pembayaran berhasil?}
+        proses[Ubah pesanan menjadi processing]
+        lepas[Lepas semua unit held]
+        batal[Batalkan transaksi atau tandai gagal]
+    end
+    subgraph Data["PostgreSQL"]
+        simpan[Simpan order, rincian, pembayaran, dan alokasi]
+    end
+    mulai --> pilih --> validasi --> stok --> cukup
+    cukup -->|Tidak| batal --> hasil
+    cukup -->|Ya| buat --> simpan --> bayar --> sukses
+    sukses -->|Ya| proses --> hasil
+    sukses -->|Tidak atau kedaluwarsa| lepas --> batal --> hasil

@@ -1,0 +1,24 @@
+swimlane-beta TB
+    subgraph Operasi["Operations Administrator"]
+        mulai([Mulai])
+        minta[Minta invoice final]
+        koreksi[Perbaiki data yang belum lengkap]
+    end
+    subgraph Sistem["InvoiceService"]
+        baca[Ambil booking, estimasi, rincian, dan payment]
+        servis{Servis completed?}
+        estimasi{Estimasi approved?}
+        lunas{Pembayaran tercatat?}
+        hitung[Hitung nilai final dari rincian yang disetujui]
+        buat[Terbitkan invoice dengan nomor unik]
+        simpan[Simpan invoice_url pada booking]
+        kirim[Sediakan dokumen kepada Customer]
+        selesai((Selesai))
+    end
+    mulai --> minta --> baca --> servis
+    servis -->|Tidak| koreksi --> selesai
+    servis -->|Ya| estimasi
+    estimasi -->|Tidak| koreksi
+    estimasi -->|Ya| lunas
+    lunas -->|Tidak| koreksi
+    lunas -->|Ya| hitung --> buat --> simpan --> kirim --> selesai

@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor A as Customer atau Operations Administrator
+    participant UI as Browser UI
+    participant B as BookingService
+    participant R as BookingRepository
+    participant K as PickupRepository
+    participant P as PaymentService
+    participant N as NotificationService
+    A->>UI: Ajukan pembatalan dan alasan
+    UI->>B: cancel(bookingId, actor, reason)
+    B->>R: Kunci booking dan baca status
+    R-->>B: Booking dan pembayaran terkait
+    B->>K: Baca status keberangkatan driver
+    K-->>B: Status pickup
+    alt Status mengizinkan pembatalan
+        B->>B: Terapkan aturan menurut pelaku dan keberangkatan
+        B->>R: Simpan cancelled dan lepas slot
+        B->>P: calculateRefund(booking, actor, pickupStatus)
+        P-->>B: Refund atau tindak lanjut
+        opt Bengkel membatalkan setelah driver berangkat
+            B->>N: Kirim kasus untuk tinjauan Super Admin
+        end
+        B->>N: Beri tahu pihak terkait
+        B-->>UI: Status batal dan hasil refund
+    else Sudah tidak dapat dibatalkan
+        B-->>UI: Tolak pembatalan
+    end
+    UI-->>A: Tampilkan hasil

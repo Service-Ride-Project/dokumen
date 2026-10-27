@@ -1,0 +1,84 @@
+classDiagram
+    direction LR
+    class Payment {
+        +UUID id
+        +UUID userId
+        +UUID bookingId
+        +UUID marketplaceOrderId
+        +UUID originalPaymentId
+        +PaymentMethod method
+        +PaymentStatus status
+        +decimal amount
+        +confirm(reference) void
+        +refund() void
+    }
+    class BookingPickup {
+        +UUID id
+        +UUID bookingId
+        +UUID staffId
+        +PickupType type
+        +PickupStatus status
+        +decimal pickupFee
+        +string handoverEvidence
+        +depart() void
+        +handOver(evidence) void
+    }
+    class PickupHistory {
+        +UUID id
+        +UUID pickupId
+        +Point geog
+        +PickupHistoryStatus status
+        +datetime recordedAt
+    }
+    class PaymentService {
+        -PaymentRepository payments
+        -DummyQrisAdapter qris
+        +startDummyQris(sourceId,amount) Payment
+        +recordCash(bookingId,amount) Payment
+        +confirm(paymentId,reference) void
+        +refund(paymentId) Payment
+    }
+    class PickupService {
+        -PickupRepository pickups
+        -LocationStream stream
+        +assign(bookingId,driverId) BookingPickup
+        +updateLocation(taskId,point) void
+        +completeHandover(taskId,evidence) void
+    }
+    class InvoiceService {
+        -PaymentRepository payments
+        -DocumentRenderer renderer
+        +issueFinalInvoice(bookingId) string
+    }
+    class DocumentRenderer {
+        <<interface>>
+        +renderFinalInvoice(bookingId) bytes
+    }
+    class DummyQrisAdapter {
+        <<interface>>
+        +createPayment(code,amount) string
+        +checkPayment(code) bool
+    }
+    class PaymentRepository {
+        <<interface>>
+        +findForUpdate(id) Payment
+        +save(payment) void
+    }
+    class PickupRepository {
+        <<interface>>
+        +findForUpdate(id) BookingPickup
+        +save(task) void
+        +appendHistory(history) void
+    }
+    class LocationStream {
+        <<interface>>
+        +publish(bookingId,point) void
+    }
+    Payment "0..1" --> "0..*" Payment : pengembalian
+    BookingPickup "1" *-- "0..*" PickupHistory : riwayat
+    PaymentService ..> PaymentRepository
+    PaymentService ..> DummyQrisAdapter
+    PickupService ..> PickupRepository
+    PickupService ..> LocationStream
+    InvoiceService ..> PaymentRepository
+    InvoiceService ..> DocumentRenderer

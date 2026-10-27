@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor Customer as Customer
+    participant UI as Browser UI
+    participant Service as StatusQueryService
+    participant Records as TransactionRepository
+    participant Dep as LocationStream
+    Customer->>UI: Select an order or service booking
+    UI->>Service: Submit order and booking status request
+    Service->>Records: Load the latest status and event timeline
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate pemilik transaksi dan batas visibilitas lokasi
+    alt Valid
+        Service->>Dep: lastKnownLocation(booking)
+        Dep-->>Service: Result
+        Service->>Records: Prepare the current status view
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display status and last known pickup location
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Show the latest available status when updates stop
+        UI-->>Customer: Display the reason and required action
+    end

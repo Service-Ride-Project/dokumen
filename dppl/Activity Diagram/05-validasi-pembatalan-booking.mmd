@@ -1,0 +1,24 @@
+swimlane-beta TB
+    subgraph Pemohon["Customer atau Operations Administrator"]
+        mulai([Mulai])
+        minta[Ajukan pembatalan dan alasan]
+        hasil[Terima keputusan dan status refund]
+    end
+    subgraph Booking["BookingService"]
+        muat[Kunci booking dan tugas pickup terkait]
+        status{Status masih boleh dibatalkan?}
+        berangkat{Driver sudah berangkat?}
+        pelaku{Siapa pembatal?}
+        catat[Catat pembatalan dan lepas slot]
+        tinjau[Catat pembatalan bengkel untuk tinjauan Super Admin]
+        tolak[Tolak pembatalan]
+    end
+    subgraph Keuangan["PaymentService"]
+        refund[Hitung dan proses refund sesuai aturan]
+    end
+    mulai --> minta --> muat --> status
+    status -->|Tidak| tolak --> hasil
+    status -->|Ya| berangkat --> pelaku
+    pelaku -->|Bengkel dan driver berangkat| tinjau --> catat
+    pelaku -->|Lainnya| catat
+    catat --> refund --> hasil

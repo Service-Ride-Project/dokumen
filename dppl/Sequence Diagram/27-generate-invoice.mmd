@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor OperationsAdmin as Workshop Operations Administrator
+    participant UI as Browser UI
+    participant Service as InvoiceService
+    participant Records as BookingRepository
+    participant Dep as DocumentRenderer
+    OperationsAdmin->>UI: Request the final service invoice
+    UI->>Service: Submit final invoice generation request
+    Service->>Records: Check service completion, approved estimate, and payment
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate servis completed, estimasi approved, pembayaran paid
+    alt Valid
+        Service->>Dep: renderFinalInvoice(booking)
+        Dep-->>Service: Result
+        Service->>Records: Create a final invoice separate from the estimate
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Provide the invoice to Customer
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Block invoice generation when required records are missing
+        UI-->>OperationsAdmin: Display the reason and required action
+    end

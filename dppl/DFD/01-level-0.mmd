@@ -1,0 +1,47 @@
+flowchart LR
+    C[Customer]
+    B[Petugas bengkel]
+    S[Super Admin]
+    X[Ekspedisi]
+    P1([1.0 Akun dan bengkel])
+    P2([2.0 Booking dan servis])
+    P3([3.0 Inventori dan marketplace])
+    P4([4.0 Pembayaran dan dokumen])
+    P5([5.0 Pickup dan pelacakan])
+    P6([6.0 Ulasan, laporan, notifikasi])
+    D1@{ shape: datastore, label: "D1 Akun dan bengkel" }
+    D2@{ shape: datastore, label: "D2 Booking dan pekerjaan" }
+    D3@{ shape: datastore, label: "D3 Produk, stok, pesanan" }
+    D4@{ shape: datastore, label: "D4 Pembayaran" }
+    D5@{ shape: datastore, label: "D5 Pickup dan riwayat" }
+    D6@{ shape: datastore, label: "D6 Ulasan" }
+    C -->|registrasi dan kendaraan| P1
+    B -->|data bengkel dan staf| P1
+    S -->|keputusan legalitas| P1
+    P1 -->|status akun dan bengkel| C
+    P1 <-->|profil dan akses| D1
+    C -->|booking dan keputusan estimasi| P2
+    B -->|konfirmasi, pemeriksaan, progres| P2
+    P2 -->|status dan estimasi| C
+    P2 <-->|booking dan pekerjaan| D2
+    C -->|pesanan dan retur| P3
+    B -->|katalog, stok, pengiriman| P3
+    P3 -->|status pesanan dan resi| C
+    P3 -->|data paket| X
+    P3 <-->|unit stok dan order| D3
+    P2 -->|tagihan servis| P4
+    P3 -->|tagihan marketplace| P4
+    C -->|pembayaran QRIS| P4
+    B -->|catatan kas| P4
+    P4 -->|status bayar dan invoice| C
+    P4 <-->|pembayaran dan refund| D4
+    P2 -->|booking pickup| P5
+    B -->|penugasan dan bukti serah terima| P5
+    P5 -->|status dan lokasi terakhir| C
+    P5 <-->|tugas dan titik lokasi| D5
+    C -->|ulasan dan keluhan| P6
+    B -->|tanggapan dan periode laporan| P6
+    S -->|keputusan moderasi| P6
+    P6 -->|notifikasi dan hasil kasus| C
+    P6 <-->|ulasan| D6
+    P4 -->|transaksi lunas| P6

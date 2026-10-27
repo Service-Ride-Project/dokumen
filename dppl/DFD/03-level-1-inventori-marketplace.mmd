@@ -1,0 +1,33 @@
+flowchart LR
+    C[Customer]
+    G[Warehouse Administrator]
+    X[Ekspedisi]
+    P31([3.1 Kelola katalog dan unit])
+    P32([3.2 Validasi keranjang])
+    P33([3.3 Alokasi stok])
+    P34([3.4 Pemenuhan dan pengiriman])
+    P35([3.5 Pembatalan dan retur])
+    DC@{ shape: datastore, label: "D3a Katalog produk" }
+    DU@{ shape: datastore, label: "D3b Unit stok" }
+    DO@{ shape: datastore, label: "D3c Order dan rincian" }
+    DP@{ shape: datastore, label: "D4 Pembayaran" }
+    G -->|produk, stok masuk, koreksi| P31
+    P31 -->|katalog| DC
+    P31 -->|unit fisik| DU
+    C -->|produk, jumlah, alamat| P32
+    DC -->|harga dan status listing| P32
+    P32 -->|keranjang tervalidasi| P33
+    P33 <-->|unit available atau held| DU
+    P33 -->|order pending payment| DO
+    DP -->|konfirmasi pembayaran| P34
+    DO -->|order lunas| P34
+    G -->|data paket, ekspedisi, resi| P34
+    P34 -->|paket| X
+    P34 -->|status dan resi| DO
+    P34 -->|status dan resi| C
+    C -->|permintaan batal atau retur dan bukti| P35
+    G -->|keputusan retur| P35
+    P35 <-->|status item dan tenggat| DO
+    P35 -->|pelepasan unit bila batal| DU
+    P35 -->|permintaan refund setelah disetujui| DP
+    P35 -->|keputusan kasus| C

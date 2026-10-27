@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    actor A as Operations Administrator
+    participant UI as Browser UI
+    participant P as PaymentService
+    participant R as PaymentRepository
+    participant Q as DummyQrisAdapter
+    C->>UI: Buka tagihan pickup, servis, atau marketplace
+    UI->>P: createPayment(sourceId, amount, qris)
+    P->>P: Validasi satu sumber transaksi dan nominal
+    P->>R: Simpan payment pending
+    R-->>P: paymentCode
+    P->>Q: createPayment(paymentCode, amount)
+    Q-->>P: QR Dummy QRIS
+    P-->>UI: Tampilkan QR dan kode
+    C->>UI: Selesaikan pembayaran
+    UI->>P: confirmDummyQris(paymentCode)
+    P->>Q: checkPayment(paymentCode)
+    alt Berhasil
+        Q-->>P: Reference paid
+        P->>R: Ubah status menjadi paid
+        P-->>UI: Pembayaran tercatat
+    else Gagal
+        Q-->>P: Failed
+        P->>R: Ubah status menjadi failed
+        P-->>UI: Pembayaran belum berhasil
+    end
+    opt Penjualan atau servis offline
+        A->>UI: Catat penerimaan tunai
+        UI->>P: recordCash(bookingId, amount)
+        P->>R: Simpan payment cash paid
+        P-->>UI: Bukti kas tercatat
+    end

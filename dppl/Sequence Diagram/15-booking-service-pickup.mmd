@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    participant UI as Browser UI
+    participant B as BookingService
+    participant G as CoveragePolicy
+    participant S as SlotPolicy
+    participant R as BookingRepository
+    participant P as PaymentService
+    C->>UI: Pilih kendaraan, bengkel, alamat, dan jadwal
+    UI->>B: createPickup(cmd)
+    B->>G: checkCoverage(workshopGeog, addressGeog)
+    G-->>B: Cakupan dan biaya pickup
+    B->>S: checkCapacity(workshopId, time)
+    S-->>B: Ketersediaan slot
+    alt Cakupan dan slot valid
+        B->>R: Simpan booking online_pickup pending
+        R-->>B: bookingId
+        B->>P: startDummyQris(bookingId, pickupFee)
+        P-->>UI: QRIS biaya pickup
+        C->>UI: Selesaikan pembayaran
+        UI->>P: checkPayment(bookingId)
+        alt Pembayaran berhasil
+            P-->>B: Payment paid
+            B-->>UI: Booking menunggu konfirmasi bengkel
+        else Pembayaran gagal
+            P-->>B: Payment failed
+            B->>R: Batalkan booking pending
+            B-->>UI: Biaya pickup belum lunas
+        end
+    else Di luar cakupan atau slot penuh
+        B-->>UI: Tolak booking dengan alasan
+    end
+    UI-->>C: Tampilkan hasil

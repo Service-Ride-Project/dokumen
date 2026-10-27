@@ -1,0 +1,27 @@
+flowchart LR
+    C[Customer]
+    O[Workshop Owner]
+    A[Operations Administrator]
+    G[Warehouse Administrator]
+    M[Mechanic]
+    D[Pickup Service]
+    S[Super Admin]
+    E[Layanan email]
+    X[Ekspedisi pihak ketiga]
+    P([0. Service Ride])
+    C -->|akun, kendaraan, booking, pesanan, persetujuan, pembayaran, ulasan| P
+    P -->|status, estimasi, invoice, resi, notifikasi| C
+    O -->|data bengkel, staf, tanggapan ulasan| P
+    P -->|status verifikasi dan laporan pendapatan| O
+    A -->|konfirmasi booking, estimasi, kas, penugasan| P
+    P -->|antrean, pembayaran, status pekerjaan| A
+    G -->|katalog, stok, ekspedisi, resi manual, keputusan retur| P
+    P -->|pesanan dan alokasi unit| G
+    M -->|diagnosis, foto, progres servis| P
+    P -->|tugas dan estimasi kerja| M
+    D -->|lokasi, status, bukti serah terima| P
+    P -->|tugas pickup dan pengantaran| D
+    S -->|verifikasi, moderasi, konfirmasi manual| P
+    P -->|dokumen dan kasus untuk tinjauan| S
+    P -->|pesan verifikasi dan status| E
+    P -->|detail paket dan alamat| X

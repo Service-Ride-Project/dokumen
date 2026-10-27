@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor Customer as Customer
+    participant UI as Browser UI
+    participant Service as VehicleService
+    participant Records as VehicleRepository
+    participant Dep as AccessPolicy
+    Customer->>UI: Create, update, or remove a vehicle
+    UI->>Service: Submit customer vehicle management request
+    Service->>Records: Validate vehicle details and account ownership
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate kepemilikan dan nomor polisi unik bagi customer
+    alt Valid
+        Service->>Dep: requireOwner(customer, vehicle)
+        Dep-->>Service: Result
+        Service->>Records: Save the vehicle change
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Display the current vehicle list
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Return vehicle validation errors
+        UI-->>Customer: Display the reason and required action
+    end

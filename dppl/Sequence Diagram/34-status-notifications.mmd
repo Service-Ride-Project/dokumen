@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant E as Domain Event
+    participant N as NotificationService
+    participant R as RecipientResolver
+    participant S as NotificationStore
+    participant Mail as EmailSender
+    actor U as Penerima berwenang
+    E->>N: publish(eventType, subjectId, actorId)
+    N->>R: resolveRecipients(eventType, subjectId)
+    R-->>N: Penerima sesuai role dan scope bengkel
+    loop Setiap penerima yang berhak
+        N->>S: Simpan notifikasi aplikasi
+        S-->>N: notificationId
+        N-->>U: Pembaruan status dalam aplikasi
+        opt Email tersedia
+            N->>Mail: send(recipient, event)
+            Mail-->>N: Status pengiriman
+        end
+    end

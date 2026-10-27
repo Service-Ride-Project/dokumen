@@ -1,0 +1,25 @@
+swimlane-beta TB
+    subgraph Customer["Customer"]
+        mulai([Mulai])
+        pesan[Ajukan booking pickup dan alamat]
+        bayar[Bayar biaya pickup via Dummy QRIS]
+        status[Terima status booking]
+    end
+    subgraph Booking["BookingService"]
+        cakupan[Validasi alamat dalam cakupan bengkel]
+        slot[Periksa kapasitas jadwal]
+        layak{Cakupan dan slot valid?}
+        sementara[Buat booking pending]
+        lunas{Biaya pickup lunas?}
+        aktif[Teruskan untuk konfirmasi bengkel]
+        tolak[Tolak permintaan dan catat alasan]
+    end
+    subgraph Operasi["Operations Administrator"]
+        tinjau[Tinjau dan konfirmasi]
+        driver[Assign Pickup Service]
+    end
+    mulai --> pesan --> cakupan --> slot --> layak
+    layak -->|Tidak| tolak --> status
+    layak -->|Ya| sementara --> bayar --> lunas
+    lunas -->|Tidak| tolak --> status
+    lunas -->|Ya| aktif --> tinjau --> driver --> status

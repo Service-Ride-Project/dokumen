@@ -1,0 +1,96 @@
+classDiagram
+    direction LR
+    class User {
+        +UUID id
+        +string email
+        +string passwordHash
+        +UserRole role
+        +AccountStatus accountStatus
+        +bool isVerified
+        +canLogin() bool
+        +verifyEmail() void
+    }
+    class Address {
+        +UUID id
+        +UUID userId
+        +string fullAddress
+        +Point geog
+        +bool isDefault
+        +validateCoverage() bool
+    }
+    class Vehicle {
+        +UUID id
+        +UUID userId
+        +string plateNumber
+        +VehicleType type
+        +validateIdentity() bool
+    }
+    class Workshop {
+        +UUID id
+        +UUID ownerId
+        +WorkshopStatus status
+        +bool marketplaceEnabled
+        +Point geog
+        +activate() void
+        +enableMarketplace() void
+    }
+    class WorkshopDocument {
+        +UUID id
+        +UUID workshopId
+        +DocumentStatus status
+        +UUID approvedBy
+        +string note
+        +approve(reviewerId) void
+        +reject(reason) void
+    }
+    class WorkshopMembership {
+        +UUID id
+        +UUID userId
+        +UUID workshopId
+        +StaffRole role
+        +bool isActive
+        +hasAccess(workshopId) bool
+    }
+    class AuthService {
+        -UserRepository users
+        -VerificationSender sender
+        +registerCustomer(cmd) User
+        +verifyAccount(code) void
+        +login(email,password) Session
+    }
+    class WorkshopService {
+        -WorkshopRepository workshops
+        -AccessPolicy policy
+        +register(cmd) Workshop
+        +reviewDocuments(id,decision) void
+        +assignStaff(cmd) WorkshopMembership
+    }
+    class AccessPolicy {
+        +requireRole(user,role) void
+        +requireWorkshopScope(user,workshopId) void
+    }
+    class UserRepository {
+        <<interface>>
+        +findByEmail(email) User
+        +save(user) void
+    }
+    class WorkshopRepository {
+        <<interface>>
+        +findById(id) Workshop
+        +save(workshop) void
+    }
+    class VerificationSender {
+        <<interface>>
+        +sendCode(email,code) void
+    }
+    User "1" --> "0..*" Address : memiliki
+    User "1" --> "0..*" Vehicle : memiliki
+    User "1" --> "0..*" Workshop : pemilik
+    Workshop "1" *-- "0..*" WorkshopDocument : legalitas
+    Workshop "1" --> "0..*" WorkshopMembership : akses staf
+    User "1" --> "0..*" WorkshopMembership : penugasan
+    AuthService ..> UserRepository
+    AuthService ..> VerificationSender
+    WorkshopService ..> WorkshopRepository
+    WorkshopService ..> AccessPolicy
+    WorkshopService ..> WorkshopDocument

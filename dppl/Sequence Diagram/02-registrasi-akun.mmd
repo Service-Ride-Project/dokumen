@@ -1,0 +1,24 @@
+%% DPPL: Customer Account Registration - rancangan interaksi komponen
+sequenceDiagram
+    autonumber
+    actor A as Customer
+    participant UI as Browser UI
+    participant S as AuthService
+    participant R as UserRepository
+    participant D as VerificationSender
+    A->>UI: Kirim profil dan email
+    UI->>S: Teruskan permintaan terautentikasi
+    S->>R: Ambil keunikan email
+    R-->>S: Data dan versi terkini
+    S->>S: Periksa kelengkapan profil dan email unik
+    alt Valid
+        S->>D: kirim kode verifikasi
+        D-->>S: Hasil pemeriksaan atau tindakan
+        S->>R: simpan akun belum terverifikasi
+        R-->>S: Commit berhasil
+        S-->>UI: instruksi verifikasi email
+        UI-->>A: Tampilkan instruksi verifikasi email
+    else Tidak valid
+        S-->>UI: Tolak: email sudah dipakai atau data tidak lengkap
+        UI-->>A: Tampilkan alasan dan langkah lanjut
+    end

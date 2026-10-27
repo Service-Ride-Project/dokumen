@@ -1,0 +1,24 @@
+%% DPPL: Workshop Verification - rancangan interaksi komponen
+sequenceDiagram
+    autonumber
+    actor A as Super Admin
+    participant UI as Browser UI
+    participant S as WorkshopService
+    participant R as WorkshopRepository
+    participant D as NotificationService
+    A->>UI: Kirim keputusan dan alasan
+    UI->>S: Teruskan permintaan terautentikasi
+    S->>R: Ambil workshop pending beserta dokumen
+    R-->>S: Data dan versi terkini
+    S->>S: Periksa dokumen sah dan keputusan beralasan
+    alt Valid
+        S->>D: beri tahu Workshop Owner
+        D-->>S: Hasil pemeriksaan atau tindakan
+        S->>R: simpan status dokumen dan aktivasi bengkel
+        R-->>S: Commit berhasil
+        S-->>UI: hasil verifikasi
+        UI-->>A: Tampilkan hasil verifikasi
+    else Tidak valid
+        S-->>UI: Tolak: pengajuan tidak layak atau sudah diputus
+        UI-->>A: Tampilkan alasan dan langkah lanjut
+    end

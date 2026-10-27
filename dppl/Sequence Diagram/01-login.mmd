@@ -1,0 +1,62 @@
+%%{init: {"theme": "redux-color"}}%%
+sequenceDiagram
+    actor SuperAdmin as Super Admin
+    actor Customer as Customer
+    actor WorkshopOwner as Workshop Owner
+    actor WarehouseAdmin as Workshop Warehouse Administrator
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor Mechanic as Mechanic
+    actor PickupService as Pickup Service
+    participant Login as Login Interface
+    participant Auth as Authentication Service
+    participant Accounts as Account Store
+    par Super Admin login
+        SuperAdmin->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>SuperAdmin: Display the role-specific result
+    and Customer login
+        Customer->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>Customer: Display the role-specific result
+    and Workshop Owner login
+        WorkshopOwner->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>WorkshopOwner: Display the role-specific result
+    and Workshop Warehouse Administrator login
+        WarehouseAdmin->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>WarehouseAdmin: Display the role-specific result
+    and Workshop Operations Administrator login
+        OperationsAdmin->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>OperationsAdmin: Display the role-specific result
+    and Mechanic login
+        Mechanic->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>Mechanic: Display the role-specific result
+    and Pickup Service login
+        PickupService->>Login: Submit account credentials
+        Login->>Auth: Validate assigned role and account status
+        Auth->>Accounts: Retrieve account record
+        Accounts-->>Auth: Return credentials and role status
+        Auth-->>Login: Create a role-based session or return an error
+        Login-->>PickupService: Display the role-specific result
+    end

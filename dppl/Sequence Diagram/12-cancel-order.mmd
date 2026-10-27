@@ -1,0 +1,24 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor Customer as Customer
+    participant UI as Browser UI
+    participant Service as MarketplaceService
+    participant Records as OrderRepository
+    participant Dep as InventoryService
+    Customer->>UI: Request cancellation before courier handoff
+    UI->>Service: Submit marketplace order cancellation request
+    Service->>Records: Check order and shipment status
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate paket belum diserahkan ke ekspedisi
+    alt Valid
+        Service->>Dep: releaseUnits(orderDetail)
+        Dep-->>Service: Result
+        Service->>Records: Cancel the eligible order and release pending units
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Start a refund when payment was received
+        UI-->>Customer: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Reject cancellation after courier handoff
+        UI-->>Customer: Display the reason and required action
+    end

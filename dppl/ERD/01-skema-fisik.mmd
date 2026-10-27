@@ -1,0 +1,309 @@
+%% ERD fisik berdasarkan db_schema.sql; semua tabel dan foreign key pada baseline
+erDiagram
+    direction LR
+    USER {
+        UUID id PK
+        VARCHAR(150) name
+        VARCHAR(255) email UK
+        VARCHAR(255) password_hash
+        VARCHAR(25) phone_number
+        VARCHAR(25) alternative_phone_number
+        TEXT profile
+        DATE date_birth
+        GENDER_ENUM gender
+        USER_ROLE_ENUM role
+        ACCOUNT_STATUS_ENUM account_status
+        BOOLEAN is_verified
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    ADDRESS {
+        UUID id PK
+        UUID id_user FK
+        VARCHAR(100) name
+        INTEGER province_id
+        INTEGER city_id
+        TEXT full_address
+        GEOGRAPHY(POINT_4326) geog
+        BOOLEAN is_default
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    VEHICLE {
+        UUID id PK
+        UUID id_user FK
+        VARCHAR(20) plate_number
+        VARCHAR(100) brand
+        VARCHAR(100) model
+        INTEGER production_year
+        VEHICLE_TYPE_ENUM type
+        TEXT notes
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    WORKSHOP {
+        UUID id PK
+        UUID id_user FK
+        VARCHAR(150) name
+        TEXT description
+        VARCHAR(500) logo
+        VARCHAR(25) phone_number
+        BOOLEAN verified
+        BOOLEAN marketplace_enabled
+        INTEGER province_id
+        INTEGER city_id
+        TEXT full_address
+        GEOGRAPHY(POINT_4326) geog
+        WORKSHOP_STATUS_ENUM status
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    WORKSHOP_DOCUMENT {
+        UUID id PK
+        UUID id_workshop FK
+        VARCHAR(30) nib
+        VARCHAR(30) npwp
+        TEXT business_incorporation_certificate
+        TEXT business_incorporation_declaration
+        DOCUMENT_STATUS_ENUM status
+        UUID approved_by FK
+        TEXT note
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ approved_on
+        TIMESTAMPTZ rejected_on
+    }
+    WORKSHOP_USER_MANAGEMENT {
+        UUID id PK
+        UUID id_user FK
+        UUID id_workshop FK
+        WORKSHOP_STAFF_ROLE_ENUM role
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    CATEGORY {
+        UUID id PK
+        VARCHAR(100) name UK
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    CATEGORY_BRAND {
+        UUID id PK
+        VARCHAR(100) name UK
+        TEXT logo
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    PRODUCT {
+        UUID id PK
+        UUID id_workshop FK
+        UUID id_category FK
+        UUID id_category_brand FK
+        UUID id_workshop_user_management FK
+        VARCHAR(150) name
+        VARCHAR(80) sku
+        TEXT description
+        TEXT image
+        NUMERIC(14_2) price
+        BOOLEAN is_active
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    MARKETPLACE_TRANSACTION {
+        UUID id PK
+        UUID id_user FK
+        VARCHAR(40) transaction_code UK
+        MARKETPLACE_ORDER_STATUS_ENUM status
+        JSONB shipping_address
+        NUMERIC(14_2) subtotal
+        NUMERIC(14_2) shipping_cost
+        NUMERIC(14_2) total_amount
+        TEXT invoice_url
+        TIMESTAMPTZ paid_at
+        TIMESTAMPTZ received_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    MARKETPLACE_TRANSACTION_DETAIL {
+        UUID id PK
+        UUID id_marketplace_transaction FK
+        UUID id_workshop FK
+        UUID id_product FK
+        INTEGER quantity
+        NUMERIC(14_2) price
+        NUMERIC(14_2) subtotal
+        JSONB product_snapshot
+        JSONB workshop_snapshot
+        VARCHAR(100) courier
+        VARCHAR(100) tracking_number
+        MARKETPLACE_ITEM_STATUS_ENUM status
+        MARKETPLACE_RETURN_STATUS_ENUM return_status
+        TEXT return_evidence_url
+        TIMESTAMPTZ return_requested_at
+        TIMESTAMPTZ shipped_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    BOOKING {
+        UUID id PK
+        UUID id_user FK
+        UUID id_workshop FK
+        UUID id_vehicle FK
+        UUID id_address FK
+        VARCHAR(40) booking_code UK
+        BOOKING_TYPE_ENUM booking_type
+        BOOKING_STATUS_ENUM status
+        INTEGER queue_number
+        JSONB address_snapshot
+        TIMESTAMPTZ scheduled_at
+        TIMESTAMPTZ estimated_finish_at
+        TIMESTAMPTZ completed_at
+        NUMERIC(14_2) estimated_total
+        APPROVAL_STATUS_ENUM approval_status
+        APPROVAL_METHOD_ENUM approval_method
+        TEXT approval_evidence
+        TIMESTAMPTZ approved_at
+        TEXT estimate_document_url
+        TEXT invoice_url
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+        TIMESTAMPTZ deleted_at
+    }
+    BOOKING_PRODUCT {
+        UUID id PK
+        UUID id_booking FK
+        UUID id_product FK
+        INTEGER quantity
+        NUMERIC(14_2) unit_price
+        NUMERIC(14_2) subtotal
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    PRODUCT_STOCK {
+        UUID id PK
+        UUID id_product FK
+        UUID id_booking_product FK
+        UUID id_marketplace_transaction_detail FK
+        VARCHAR(100) serial_number
+        PRODUCT_STOCK_STATUS_ENUM status
+        TIMESTAMPTZ reserved_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    BOOKING_SERVICE {
+        UUID id PK
+        UUID id_booking FK
+        UUID id_mechanic FK
+        TEXT customer_complaint
+        TEXT diagnosis
+        TEXT service_description
+        NUMERIC(14_2) labor_price
+        JSONB inspection_photos
+        JSONB progress_history
+        BOOKING_SERVICE_STATUS_ENUM status
+        TIMESTAMPTZ started_at
+        TIMESTAMPTZ completed_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    BOOKING_PICKUP {
+        UUID id PK
+        UUID id_booking FK
+        UUID id_workshop_user_management FK
+        PICKUP_TYPE_ENUM pickup_type
+        PICKUP_STATUS_ENUM status
+        NUMERIC(14_2) pickup_fee
+        TIMESTAMPTZ scheduled_at
+        TIMESTAMPTZ departed_at
+        TIMESTAMPTZ completed_at
+        UUID cancelled_by FK
+        TIMESTAMPTZ cancelled_at
+        TEXT cancellation_reason
+        TEXT handover_evidence
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    BOOKING_PICKUP_HISTORY {
+        UUID id PK
+        UUID id_booking_pickup FK
+        GEOGRAPHY(POINT_4326) geog
+        PICKUP_HISTORY_STATUS_ENUM status
+        TEXT note
+        TIMESTAMPTZ recorded_at
+    }
+    PAYMENT {
+        UUID id PK
+        UUID id_user FK
+        UUID id_booking FK
+        UUID id_marketplace_transaction FK
+        UUID id_original_payment FK
+        VARCHAR(40) payment_code UK
+        PAYMENT_TYPE_ENUM payment_type
+        PAYMENT_METHOD_ENUM payment_method
+        PAYMENT_STATUS_ENUM status
+        NUMERIC(14_2) amount
+        VARCHAR(100) reference_number
+        TIMESTAMPTZ paid_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    REVIEW {
+        UUID id PK
+        UUID id_user FK
+        UUID id_workshop FK
+        UUID id_booking FK
+        UUID id_marketplace_transaction FK
+        INTEGER rating
+        TEXT comment
+        TEXT owner_reply
+        BOOLEAN is_hidden
+        TEXT moderation_reason
+        TIMESTAMPTZ replied_at
+        TIMESTAMPTZ created_at
+        TIMESTAMPTZ updated_at
+    }
+    USER ||--o{ ADDRESS : id_user
+    USER ||--o{ VEHICLE : id_user
+    USER ||--o{ WORKSHOP : id_user
+    WORKSHOP ||--o{ WORKSHOP_DOCUMENT : id_workshop
+    USER o|--o{ WORKSHOP_DOCUMENT : approved_by
+    USER ||--o{ WORKSHOP_USER_MANAGEMENT : id_user
+    WORKSHOP ||--o{ WORKSHOP_USER_MANAGEMENT : id_workshop
+    WORKSHOP ||--o{ PRODUCT : id_workshop
+    CATEGORY ||--o{ PRODUCT : id_category
+    CATEGORY_BRAND o|--o{ PRODUCT : id_category_brand
+    WORKSHOP_USER_MANAGEMENT o|--o{ PRODUCT : id_workshop_user_management
+    USER ||--o{ MARKETPLACE_TRANSACTION : id_user
+    MARKETPLACE_TRANSACTION ||--o{ MARKETPLACE_TRANSACTION_DETAIL : id_marketplace_transaction
+    WORKSHOP ||--o{ MARKETPLACE_TRANSACTION_DETAIL : id_workshop
+    PRODUCT ||--o{ MARKETPLACE_TRANSACTION_DETAIL : id_product
+    USER ||--o{ BOOKING : id_user
+    WORKSHOP ||--o{ BOOKING : id_workshop
+    VEHICLE ||--o{ BOOKING : id_vehicle
+    ADDRESS o|--o{ BOOKING : id_address
+    BOOKING ||--o{ BOOKING_PRODUCT : id_booking
+    PRODUCT ||--o{ BOOKING_PRODUCT : id_product
+    PRODUCT ||--o{ PRODUCT_STOCK : id_product
+    BOOKING_PRODUCT o|--o{ PRODUCT_STOCK : id_booking_product
+    MARKETPLACE_TRANSACTION_DETAIL o|--o{ PRODUCT_STOCK : id_marketplace_transaction_detail
+    BOOKING ||--o{ BOOKING_SERVICE : id_booking
+    WORKSHOP_USER_MANAGEMENT ||--o{ BOOKING_SERVICE : id_mechanic
+    BOOKING ||--o{ BOOKING_PICKUP : id_booking
+    WORKSHOP_USER_MANAGEMENT ||--o{ BOOKING_PICKUP : id_workshop_user_management
+    USER o|--o{ BOOKING_PICKUP : cancelled_by
+    BOOKING_PICKUP ||--o{ BOOKING_PICKUP_HISTORY : id_booking_pickup
+    USER ||--o{ PAYMENT : id_user
+    BOOKING o|--o{ PAYMENT : id_booking
+    MARKETPLACE_TRANSACTION o|--o{ PAYMENT : id_marketplace_transaction
+    PAYMENT o|--o{ PAYMENT : id_original_payment
+    USER ||--o{ REVIEW : id_user
+    WORKSHOP ||--o{ REVIEW : id_workshop
+    BOOKING o|--o{ REVIEW : id_booking
+    MARKETPLACE_TRANSACTION o|--o{ REVIEW : id_marketplace_transaction

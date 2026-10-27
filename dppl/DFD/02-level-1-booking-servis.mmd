@@ -1,0 +1,35 @@
+flowchart LR
+    C[Customer]
+    A[Operations Administrator]
+    M[Mechanic]
+    P21([2.1 Validasi booking dan jadwal])
+    P22([2.2 Konfirmasi dan penugasan])
+    P23([2.3 Pemeriksaan dan estimasi])
+    P24([2.4 Persetujuan dan alokasi])
+    P25([2.5 Pengerjaan dan penyelesaian])
+    DB@{ shape: datastore, label: "D2a Booking" }
+    DS@{ shape: datastore, label: "D2b Booking service dan product" }
+    DI@{ shape: datastore, label: "D3 Unit stok" }
+    DP@{ shape: datastore, label: "D4 Pembayaran" }
+    C -->|kendaraan, bengkel, jadwal, alamat| P21
+    P21 <-->|slot dan booking| DB
+    P21 -->|permintaan booking valid| P22
+    A -->|keputusan dan mekanik| P22
+    P22 -->|booking terkonfirmasi| DB
+    P22 -->|tugas pemeriksaan| M
+    M -->|diagnosis, foto, kebutuhan part| P23
+    P23 -->|ketersediaan tanpa reservasi| DI
+    DI -->|jumlah available| P23
+    P23 -->|estimasi rinci| C
+    P23 -->|rincian pekerjaan| DS
+    C -->|keputusan atau bukti persetujuan| P24
+    A -->|bukti persetujuan luar aplikasi| P24
+    P24 -->|permintaan alokasi atomik| DI
+    DI -->|hasil alokasi| P24
+    DP -->|status pembayaran servis| P24
+    P24 -->|estimasi disetujui dan lunas| P25
+    P25 -->|perintah kerja| M
+    M -->|progres dan hasil akhir| P25
+    P25 -->|status selesai| DB
+    P25 -->|riwayat pekerjaan| DS
+    P25 -->|status servis| C

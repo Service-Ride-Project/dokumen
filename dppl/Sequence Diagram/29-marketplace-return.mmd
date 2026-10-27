@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    actor G as Warehouse Administrator
+    participant UI as Browser UI
+    participant M as MarketplaceService
+    participant O as OrderRepository
+    participant P as PaymentService
+    C->>UI: Ajukan retur item beserta bukti
+    UI->>M: requestReturn(detailId, evidence)
+    M->>O: Ambil item, received_at, status, pemilik
+    O-->>M: Data item dan waktu penerimaan
+    alt Diajukan maksimal satu hari dan bukti tersedia
+        M->>O: Simpan return_status requested
+        M-->>UI: Menunggu tinjauan gudang
+        G->>UI: Masukkan keputusan dan alasan
+        UI->>M: decideReturn(detailId, decision)
+        alt Disetujui
+            M->>O: Simpan return_status approved
+            M->>P: refund(originalPaymentId, amount)
+            P-->>M: Hasil refund
+            M->>O: Simpan refunded hanya bila refund berhasil
+            M-->>UI: Tampilkan keputusan dan refund
+        else Ditolak
+            M->>O: Simpan return_status rejected
+            M-->>UI: Tampilkan alasan penolakan
+        end
+    else Terlambat atau bukti kurang
+        M-->>UI: Tolak permintaan retur
+    end
+    UI-->>C: Tampilkan status retur

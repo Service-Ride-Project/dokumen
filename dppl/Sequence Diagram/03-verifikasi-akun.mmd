@@ -1,0 +1,24 @@
+%% DPPL: Account Verification - rancangan interaksi komponen
+sequenceDiagram
+    autonumber
+    actor A as Customer
+    participant UI as Browser UI
+    participant S as AuthService
+    participant R as UserRepository
+    participant D as VerificationStore
+    A->>UI: Kirim email dan kode verifikasi
+    UI->>S: Teruskan permintaan terautentikasi
+    S->>R: Ambil akun dan kode aktif
+    R-->>S: Data dan versi terkini
+    S->>S: Periksa kode cocok serta belum kedaluwarsa
+    alt Valid
+        S->>D: hapus kode sekali pakai
+        D-->>S: Hasil pemeriksaan atau tindakan
+        S->>R: set is_verified menjadi true
+        R-->>S: Commit berhasil
+        S-->>UI: akun terverifikasi
+        UI-->>A: Tampilkan akun terverifikasi
+    else Tidak valid
+        S-->>UI: Tolak: kode salah atau kedaluwarsa
+        UI-->>A: Tampilkan alasan dan langkah lanjut
+    end

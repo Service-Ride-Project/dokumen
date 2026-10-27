@@ -1,0 +1,40 @@
+%% DPPL: interaksi teknis berdasarkan skenario SKPL
+sequenceDiagram
+    autonumber
+    actor OperationsAdmin as Workshop Operations Administrator
+    actor PickupService as Pickup Service
+    actor Customer as Customer
+    participant UI as Browser UI
+    participant Service as PickupService
+    participant Records as PickupRepository
+    participant Dep as LocationStream
+    OperationsAdmin->>UI: Assign Pickup Service after pickup fee payment
+    UI->>Service: Submit vehicle pickup request
+    Service->>Records: Check payment and pickup task status
+    Records-->>Service: Return current records and validation result
+    Service->>Service: Validate driver ditugaskan dan pickup sudah dibayar
+    alt Valid
+        Service->>Dep: publishSSE(booking, location)
+        Dep-->>Service: Result
+        Service->>Records: Activate the pickup task and location tracking
+        Records-->>Service: Confirm the saved or calculated result
+        Service-->>UI: Record vehicle arrival at the workshop
+        UI-->>OperationsAdmin: Display the result and next step
+    else Request needs correction or review
+        Service-->>UI: Raise an alert when location updates stop
+        UI-->>OperationsAdmin: Display the reason and required action
+    end
+    opt Pickup Service participates in this use case
+        PickupService->>UI: Accept the task and report location and handover
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>PickupService: Return the recorded outcome
+    end
+    opt Customer participates in this use case
+        Customer->>UI: Confirm vehicle handover to Pickup Service
+        UI->>Service: Submit the role-specific response
+        Service->>Records: Save the additional case action
+        Records-->>Service: Confirm the additional action
+        Service-->>Customer: Return the recorded outcome
+    end
