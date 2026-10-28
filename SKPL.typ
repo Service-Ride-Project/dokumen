@@ -210,10 +210,10 @@
     stroke: none,
 
     [Rovino Ramadhani], [103072400031],
-    [Nama Anggota 2], [NIM Anggota 2],
-    [Nama Anggota 3], [NIM Anggota 3],
-    [Nama Anggota 3], [NIM Anggota 3],
-    [Nama Anggota 3], [NIM Anggota 3],
+    [Galang Herjuno Mulya], [103072430006],
+    [Amirah Esssary Yunsarah Sujuthi], [103072400077],
+    [Erastus Liubeta Septian], [103072400020],
+    [Assyifa Dwi Safitri], [103072400064],
   )
 
   #v(1.5cm)
